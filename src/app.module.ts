@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppConfig } from './app.config';
 import { JwtModule } from '@nestjs/jwt';
 import { timestampsPlugin } from './shared/plugins/timestamps.plugin';
+import { AuthModule } from "./modules/auth/auth.module";
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { timestampsPlugin } from './shared/plugins/timestamps.plugin';
       },
       inject: [ConfigService],
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
