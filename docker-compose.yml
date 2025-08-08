@@ -1,0 +1,9 @@
+version: '3'
+services:
+  node_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /app
+    ports:
+      - "4000:3000"
