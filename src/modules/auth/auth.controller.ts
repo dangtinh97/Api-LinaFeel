@@ -12,6 +12,7 @@ export class AuthController {
     const uidDevice = req.headers['uid-device'];
     const appVersion = parseInt(req.headers['app-version'] ?? '0');
     const lang = req.headers['lang'] ?? 'en';
-    return await this.service.login(uidDevice, uidDevice, appVersion, lang);
+    const username = req.body['username'] ?? uidDevice;
+    return await this.service.login(username, uidDevice, appVersion, lang);
   }
 }
