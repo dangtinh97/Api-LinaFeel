@@ -1,10 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
+import { BaseModel } from '../../../shared/schemas/base.model';
 
 @Schema({
   collection: 'moods',
 })
-export class Mood {
+export class Mood extends BaseModel {
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
   })
