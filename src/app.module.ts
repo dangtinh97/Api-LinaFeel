@@ -4,9 +4,11 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppConfig } from './app.config';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from "@nestjs/jwt";
 import { timestampsPlugin } from './shared/plugins/timestamps.plugin';
-import { AuthModule } from "./modules/auth/auth.module";
+import { AuthModule } from './modules/auth/auth.module';
+import { MoodModule } from './modules/mood/mood.module';
+import { JwtStrategy } from "./jwt-strategy/jwt-strategy.service";
 
 @Module({
   imports: [
@@ -18,8 +20,8 @@ import { AuthModule } from "./modules/auth/auth.module";
       useFactory: (configService: ConfigService) => {
         return {
           global: true,
-          secret: configService.get<AppConfig['JWT_SECRET']>('JWT_SECRET'),
-          signOptions: { expiresIn: '60s' },
+          secret: configService.get<string>('JWT_SECRET')!,
+          signOptions: { expiresIn: '1y' },
         };
       },
       inject: [ConfigService],
@@ -40,8 +42,9 @@ import { AuthModule } from "./modules/auth/auth.module";
       inject: [ConfigService],
     }),
     AuthModule,
+    MoodModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtService, JwtStrategy, ConfigService],
 })
 export class AppModule {}

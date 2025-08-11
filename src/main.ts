@@ -5,6 +5,8 @@ import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
+import { UnauthorizedExceptionFilter } from './exception-filter/UnauthorizedExceptionFilter';
+import { NotFoundExceptionFilter } from './exception-filter/NotFoundExceptionFilter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -14,6 +16,8 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get<AppConfig['APP_PORT']>('APP_PORT')!;
   app.useGlobalInterceptors(new ResponseInterceptor(new Reflector()));
+  app.useGlobalFilters(new UnauthorizedExceptionFilter());
+  app.useGlobalFilters(new NotFoundExceptionFilter());
   app.enableCors();
   app.use(bodyParser.json({ limit: '50mb' }));
   app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
