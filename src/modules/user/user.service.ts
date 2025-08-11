@@ -12,6 +12,7 @@ export class UserService {
 
   async updateOrCreate(
     username: string,
+    fullname: string,
     uidDevice: string,
     appVersion: number,
     lang: string,
@@ -24,6 +25,7 @@ export class UserService {
             language: lang,
             uid_device: uidDevice,
             app_version: appVersion,
+            full_name: fullname,
           },
         },
         { upsert: true, returnDocument: 'after' },

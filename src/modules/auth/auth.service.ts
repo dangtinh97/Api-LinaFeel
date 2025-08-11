@@ -12,11 +12,13 @@ export class AuthService {
   async login(
     uidDevice: string,
     username: string,
+    fullname: string,
     appVersion: number,
     language: string,
   ) {
     const user = await this.userService.updateOrCreate(
       username,
+      fullname,
       uidDevice,
       appVersion,
       language,

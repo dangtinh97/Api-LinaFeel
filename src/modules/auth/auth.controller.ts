@@ -13,6 +13,13 @@ export class AuthController {
     const appVersion = parseInt(req.headers['app-version'] ?? '0');
     const lang = req.headers['lang'] ?? 'en';
     const username = req.body['username'] ?? uidDevice;
-    return await this.service.login(username, uidDevice, appVersion, lang);
+    const fullname = req.body['full_name'] ?? uidDevice;
+    return await this.service.login(
+      uidDevice,
+      username,
+      fullname,
+      appVersion,
+      lang,
+    );
   }
 }
