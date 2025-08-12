@@ -15,5 +15,6 @@ import { Mood, MoodSchema } from './schemas/mood.schema';
   ],
   controllers: [MoodController],
   providers: [MoodService],
+  exports: [MoodService],
 })
 export class MoodModule {}

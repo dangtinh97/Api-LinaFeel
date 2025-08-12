@@ -4,6 +4,7 @@ import { ChatService } from './chat.service';
 import { MongooseModule } from "@nestjs/mongoose";
 import { Message, MessageSchema } from "./schemes/message.schema";
 import { GeminiModule } from "../gemini/gemini.module";
+import { MoodModule } from "../mood/mood.module";
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { GeminiModule } from "../gemini/gemini.module";
       }
     ]),
     GeminiModule,
+    MoodModule,
   ],
   controllers: [ChatController],
   providers: [ChatService],

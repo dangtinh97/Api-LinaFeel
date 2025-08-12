@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { AppConfig } from '../../app.config';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
+import * as _ from 'lodash';
 
 @Injectable()
 export class GeminiService {
@@ -12,6 +13,7 @@ export class GeminiService {
   ) {}
 
   async chat(messages: any[]) {
+    console.log(JSON.stringify(messages));
     const url =
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
     const apiKey =
@@ -37,6 +39,9 @@ export class GeminiService {
         },
       ),
     );
-    console.log(curl.data);
+    return _.get(curl.data, 'candidates.0.content.parts.0.text', '').replaceAll(
+      '\n',
+      '',
+    );
   }
 }

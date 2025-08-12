@@ -18,4 +18,15 @@ export class MoodService {
       time: new Date(),
     });
   }
+
+  async findMoodById(oid: string) {
+    if (!ObjectId.isValid(oid)) {
+      return null;
+    }
+    return await this.moodModel
+      .findOne({
+        _id: new ObjectId(oid),
+      })
+      .exec();
+  }
 }
