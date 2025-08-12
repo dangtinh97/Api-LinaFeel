@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { BaseModel } from "../../../shared/schemas/base.model";
+import { BaseModel } from '../../../shared/schemas/base.model';
 
 @Schema({
   collection: 'messages',
 })
-export class Message extends BaseModel{
+export class Message extends BaseModel {
   @Prop()
-  chat_id: string;
+  session_id: string;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,

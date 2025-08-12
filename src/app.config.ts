@@ -9,4 +9,7 @@ export class AppConfig {
 
   @IsString()
   readonly JWT_SECRET: string;
+
+  @IsString()
+  readonly GEMINI_API_KEY: string;
 }

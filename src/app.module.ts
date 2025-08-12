@@ -4,11 +4,12 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppConfig } from './app.config';
-import { JwtModule, JwtService } from "@nestjs/jwt";
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { timestampsPlugin } from './shared/plugins/timestamps.plugin';
 import { AuthModule } from './modules/auth/auth.module';
 import { MoodModule } from './modules/mood/mood.module';
-import { JwtStrategy } from "./jwt-strategy/jwt-strategy.service";
+import { JwtStrategy } from './jwt-strategy/jwt-strategy.service';
+import { ChatModule } from './modules/chat/chat.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { JwtStrategy } from "./jwt-strategy/jwt-strategy.service";
     }),
     AuthModule,
     MoodModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService, JwtStrategy, ConfigService],
