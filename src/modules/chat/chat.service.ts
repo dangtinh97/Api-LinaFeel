@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { MoodService } from '../mood/mood.service';
 import { GeminiService } from '../gemini/gemini.service';
+import { sleep } from '../../common';
 
 @Injectable()
 export class ChatService {
@@ -71,7 +72,8 @@ export class ChatService {
       session_id: sessionOid,
     });
 
-    if (list.length > 20) {
+    if (list.length > 18) {
+      await sleep(1000);
       return {
         message:
           'Mình nghĩ hôm nay chúng ta đã chia sẻ khá nhiều rồi, cảm ơn cậu đã tin tưởng.\n[Đã đạt giới hạn]',
