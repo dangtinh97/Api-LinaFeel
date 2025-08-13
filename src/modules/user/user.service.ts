@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class UserService {
@@ -29,6 +30,24 @@ export class UserService {
           },
         },
         { upsert: true, returnDocument: 'after' },
+      )
+      .exec();
+  }
+
+  async deleteAccount(userOid: string) {
+    return await this.userModel
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(userOid),
+        },
+        [
+          {
+            $set: {
+              username: { $concat: ['DELETE_', '$username'] },
+            },
+          },
+        ],
+        { new: true },
       )
       .exec();
   }
