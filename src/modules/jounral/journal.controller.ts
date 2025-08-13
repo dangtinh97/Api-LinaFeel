@@ -27,7 +27,7 @@ export class JournalController {
     return await this.service.list(user_oid);
   }
 
-  @Post('/{id}')
+  @Post('/:id')
   async update(
     @Param('id') id: string,
     @User() { user_oid }: any,
