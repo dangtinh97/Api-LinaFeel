@@ -29,6 +29,16 @@ export class GeminiService {
               },
             ],
           },
+          safetySettings: [
+            {
+              category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+              threshold: 'BLOCK_LOW_AND_ABOVE',
+            },
+            {
+              category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+              threshold: 'BLOCK_LOW_AND_ABOVE',
+            },
+          ],
           contents: messages,
         },
         {
@@ -39,9 +49,15 @@ export class GeminiService {
         },
       ),
     );
-    return _.get(curl.data, 'candidates.0.content.parts.0.text', '').replaceAll(
-      '\n',
-      '',
-    );
+    const block = _.get(curl.data, 'candidates.0.finishReason', '');
+    const messageError =
+      block === 'SAFETY'
+        ? 'Nội dung bị chặn vì lý do an toàn'
+        : 'Tôi mệt quá, cần nghỉ ngơi chút, bạn quay lại sau nhé.';
+    return _.get(
+      curl.data,
+      'candidates.0.content.parts.0.text',
+      messageError,
+    ).replaceAll('\n', '');
   }
 }
