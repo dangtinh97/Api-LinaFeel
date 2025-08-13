@@ -10,6 +10,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { MoodModule } from './modules/mood/mood.module';
 import { JwtStrategy } from './jwt-strategy/jwt-strategy.service';
 import { ChatModule } from './modules/chat/chat.module';
+import { JournalModule } from "./modules/jounral/journal.module";
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { ChatModule } from './modules/chat/chat.module';
     AuthModule,
     MoodModule,
     ChatModule,
+    JournalModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService, JwtStrategy, ConfigService],
