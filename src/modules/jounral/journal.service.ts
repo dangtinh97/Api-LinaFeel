@@ -26,4 +26,19 @@ export class JournalService {
       .sort({ _id: 'desc' })
       .exec();
   }
+
+  async update(oid: string, content: string) {
+    return await this.journalModel
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(oid),
+        },
+        {
+          $set: {
+            content: content,
+          },
+        },
+      )
+      .exec();
+  }
 }
