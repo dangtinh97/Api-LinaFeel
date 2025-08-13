@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Xoá tài khoản — LinaFeel</title>
+  <style>
+    :root{
+      --bg:#0f172a; --card:#111827; --text:#e5e7eb; --muted:#94a3b8; --accent:#22d3ee; --accent2:#a78bfa; --danger:#fb7185; --ok:#34d399
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; color:var(--text);
+      background: black}
+    .container{max-width:900px;margin:0 auto;padding:40px 20px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08); border-radius:24px; padding:32px; box-shadow:0 10px 30px rgba(0,0,0,.35)}
+    h1{font-size:clamp(28px,4vw,40px); margin:0 0 8px}
+    h2{font-size:clamp(20px,2.5vw,26px); margin:28px 0 8px}
+    p{margin:10px 0}
+    ul{margin:8px 0 8px 20px}
+    .muted{color:var(--muted)}
+    .badge{display:inline-block; padding:4px 10px; border-radius:999px; background:rgba(251,113,133,.15); color:#ffe4e6; border:1px solid rgba(251,113,133,.35); font-weight:600; font-size:12px; letter-spacing:.3px}
+    .callout{border-left:4px solid var(--accent); background:rgba(34,211,238,.08); padding:12px 14px; border-radius:8px}
+    .danger{border-left-color:var(--danger); background:rgba(251,113,133,.08)}
+    .ok{border-left-color:var(--ok); background:rgba(52,211,153,.08)}
+    a{color:var(--accent)}
+    .cta{display:inline-block; padding:10px 16px; border-radius:12px; border:1px solid rgba(34,211,238,.45); text-decoration:none}
+    footer{margin-top:28px; font-size:14px}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap">
+      <h1>Xoá tài khoản</h1>
+      <span class="badge">LinaFeel</span>
+    </div>
+    <p class="muted">Cập nhật: <strong>13/08/2025</strong></p>
+
+    <section class="callout">
+      <p>Trang này hướng dẫn bạn <strong>xoá tài khoản</strong> và dữ liệu liên quan trong LinaFeel.
+        Tài khoản hiện tại được xác định bằng <em>username nội bộ</em> gắn với <code>ANDROID_ID</code> của thiết bị để đảm bảo <strong>duy nhất trên mỗi thiết bị</strong>.</p>
+    </section>
+
+    <section id="in-app">
+      <h2>1) Xoá tài khoản ngay trong ứng dụng</h2>
+      <p>Thao tác:</p>
+      <ul>
+        <li>Mở app <strong>LinaFeel</strong>.</li>
+        <li>Vào tab <strong>Profile</strong>.</li>
+        <li>Chọn <strong>Xoá tài khoản</strong> &rarr; xác nhận.</li>
+      </ul>
+      <div class="callout danger">
+        <strong>Lưu ý:</strong> Hành động không thể hoàn tác. Một khi xoá, bạn <em>không thể khôi phục</em> dữ liệu đã bị xoá khỏi máy chủ. Nếu bạn cài lại app hoặc đổi thiết bị (ANDROID_ID khác), tài khoản mới sẽ được tạo riêng.
+      </div>
+    </section>
+
+    <section id="fallback">
+      <h2>2) Không vào được app? Yêu cầu xoá qua email</h2>
+      <p>Nếu bạn không còn truy cập được ứng dụng, hãy gửi email đến <a href="mailto:dangtinha2@gmail.com">dangtinha2@gmail.com</a> (thay bằng email chính thức nếu khác) với tiêu đề <em>Yêu cầu xoá tài khoản</em> và cung cấp:</p>
+      <ul>
+        <li>Mã định danh thiết bị (ANDROID_ID) nếu biết.</li>
+        <li>Thông tin nhận diện tài khoản trước đây (ví dụ ngày tạo, thiết bị, nội dung gần nhất…).</li>
+      </ul>
+      <p>Chúng tôi sẽ xác minh và tiến hành xoá theo quy trình bảo mật.</p>
+    </section>
+
+    <section id="scope">
+      <h2>3) Những gì sẽ bị xoá</h2>
+      <ul>
+        <li>Hồ sơ tài khoản nội bộ (username gắn với <code>ANDROID_ID</code>).</li>
+        <li>Dữ liệu cá nhân do bạn tạo trong app (nhật ký, cài đặt cá nhân, cấu hình tính năng) được lưu trên máy chủ.</li>
+        <li>Mốc liên kết/phiên đăng nhập còn hiệu lực.</li>
+      </ul>
+      <h3>Những gì có thể được giữ lại tạm thời</h3>
+      <ul>
+        <li>Bản ghi sao lưu hệ thống trong thời hạn lưu trữ giới hạn (theo chính sách sao lưu), sau đó sẽ bị ghi đè.</li>
+        <li>Dữ liệu cần giữ để tuân thủ pháp luật hoặc giải quyết tranh chấp (nếu có), và sẽ bị xoá khi hết mục đích.</li>
+      </ul>
+    </section>
+
+    <section id="timeline">
+      <h2>4) Thời gian xử lý</h2>
+      <p>Yêu cầu xoá trong app được thực hiện gần như ngay lập tức đối với dữ liệu hoạt động. Các bản sao lưu hệ thống (nếu có) sẽ bị xoá/ghi đè theo chu kỳ sao lưu định kỳ.</p>
+    </section>
+
+    <section id="recover">
+      <h2>5) Khôi phục sau khi xoá</h2>
+      <p>Không hỗ trợ khôi phục dữ liệu đã xoá. Bạn có thể tiếp tục sử dụng LinaFeel bằng cách cài đặt lại ứng dụng; hệ thống sẽ tạo một tài khoản mới gắn với <code>ANDROID_ID</code> hiện tại.</p>
+    </section>
+
+    <section id="privacy">
+      <h2>6) Quyền riêng tư</h2>
+      <p>Xem thêm <a href="http://linafeel.myoupip.com/public/tou">Chính sách Quyền riêng tư</a> để biết rõ dữ liệu nào được thu thập, mục đích xử lý và cách thực hiện các quyền của bạn (truy cập, chỉnh sửa, xoá…).</p>
+    </section>
+
+    <section id="dev-note" class="callout ok">
+      <h2>Dành cho nhà phát triển (tuỳ chọn hiển thị)</h2>
+      <p>Trong app, có thể hiển thị <em>ANDROID_ID</em> để người dùng tự nhận diện khi gửi yêu cầu hỗ trợ: <code>Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)</code>.</p>
+    </section>
+
+    <section id="contact">
+      <h2>7) Liên hệ</h2>
+      <p>Mọi thắc mắc xin liên hệ: <a href="mailto:dangtinha2@gmail.com">dangtinha2@gmail.com</a>.</p>
+    </section>
+
+    <footer class="muted">
+      <p>© <span id="y"></span> LinaFeel. Mọi quyền được bảo lưu.</p>
+    </footer>
+  </div>
+</div>
+<script>document.getElementById('y').textContent=new Date().getFullYear()</script>
+</body>
+</html>

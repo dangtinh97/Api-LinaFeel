@@ -7,9 +7,12 @@ import * as bodyParser from 'body-parser';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { UnauthorizedExceptionFilter } from './exception-filter/UnauthorizedExceptionFilter';
 import { NotFoundExceptionFilter } from './exception-filter/NotFoundExceptionFilter';
+import { join } from 'path';
+import * as hbs from 'hbs';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: ['debug', 'log', 'error', 'warn'],
   });
   const logger = new Logger();
@@ -21,6 +24,8 @@ async function bootstrap() {
   app.enableCors();
   app.use(bodyParser.json({ limit: '50mb' }));
   app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+  app.setBaseViewsDir(join(__dirname, '..', 'views')); // Thư mục chứa file HTML
+  app.setViewEngine('hbs'); // Sử dụng Handlebars
   await app.listen(port);
   logger.log('App running port: ' + port);
 }
