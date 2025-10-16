@@ -1,1 +1,1 @@
-# API LinaFeel
+# API LinaFeel + Emo Desk

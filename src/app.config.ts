@@ -12,4 +12,7 @@ export class AppConfig {
 
   @IsString()
   readonly GEMINI_API_KEY: string;
+  
+  @IsString()
+  readonly GOOGLE_SERVICE_ACCOUNT: string;
 }

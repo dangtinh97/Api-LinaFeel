@@ -12,6 +12,9 @@ import { JwtStrategy } from './jwt-strategy/jwt-strategy.service';
 import { ChatModule } from './modules/chat/chat.module';
 import { JournalModule } from "./modules/jounral/journal.module";
 import { ViewModule } from "./modules/view/view.module";
+import { AppConfigModule } from './modules/app-config/app-config.module';
+import { BillingModule } from './modules/billing/billing.module';
+import { KeyAppModule } from './modules/key-app/key-app.module';
 
 @Module({
   imports: [
@@ -49,6 +52,8 @@ import { ViewModule } from "./modules/view/view.module";
     ChatModule,
     JournalModule,
     ViewModule,
+    AppConfigModule,
+    BillingModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService, JwtStrategy, ConfigService],
