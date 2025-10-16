@@ -36,6 +36,7 @@ COPY --from=builder /app/tsconfig.json /app/tsconfig.build.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/.env ./.env
+COPY --from=builder /app/certs ./certs
 # Expose cổng ứng dụng
 EXPOSE 3000
 
