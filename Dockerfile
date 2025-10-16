@@ -10,7 +10,7 @@ ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm install -g pnpm
 
 # Copy file cấu hình trước để cache install dependencies
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml tsconfig.json tsconfig.build.json nest-cli.json ./
 
 # Cài dependencies (chỉ cần dependencies phục vụ build)
 RUN pnpm install --frozen-lockfile
@@ -32,9 +32,10 @@ RUN npm install -g pnpm
 
 # Copy file cần thiết từ build stage
 COPY --from=builder /app/package.json /app/pnpm-lock.yaml ./
+COPY --from=builder /app/tsconfig.json /app/tsconfig.build.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
-
+COPY --from=builder /app/.env ./.env
 # Expose cổng ứng dụng
 EXPOSE 3000
 
