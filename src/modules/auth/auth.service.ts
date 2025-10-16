@@ -1,12 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { AppConfigService } from '../app-config/app-config.service';
+import { AppSettingKey } from '../app-config/schemas/app-setting.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private settingService: AppConfigService,
   ) {}
 
   async login(
@@ -23,6 +26,19 @@ export class AuthService {
       appVersion,
       language,
     );
+
+    const versionCurrent = await this.settingService.getByKeyConfig(
+      AppSettingKey.APP_VERSION.toString(),
+    );
+    if (versionCurrent > appVersion) {
+      throw new HttpException(
+        {
+          message: 'Update app new verstion',
+        },
+        4003,
+      );
+    }
+
     const token = this.jwtService.sign({
       sub: user._id.toString(),
     });
