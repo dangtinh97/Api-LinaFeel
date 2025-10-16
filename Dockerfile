@@ -37,6 +37,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/.env ./.env
 COPY --from=builder /app/certs ./certs
+COPY --from=builder /app/views ./views
 # Expose cổng ứng dụng
 EXPOSE 3000
 
