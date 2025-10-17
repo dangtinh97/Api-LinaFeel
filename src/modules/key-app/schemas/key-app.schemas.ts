@@ -15,6 +15,9 @@ export class KeyApp {
 
   @Prop()
   order_id: string;
+
+  @Prop({ default: false })
+  use: boolean;
 }
 
 export const KeyAppSchema = SchemaFactory.createForClass(KeyApp);
