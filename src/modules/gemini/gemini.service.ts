@@ -205,7 +205,7 @@ Luôn trả lời ngắn gọn, tự nhiên như đang nói chuyện, không ch�
           },
         }),
       );
-      console.log(curl);
+      console.log(curl.data);
       if (curl.status != 200) {
         return {
           status: curl.status,
@@ -222,6 +222,7 @@ Luôn trả lời ngắn gọn, tự nhiên như đang nói chuyện, không ch�
       );
       return functionCall;
     } catch (e) {
+      console.log(e.message);
       return {
         status: 403,
         text: 'Emo quá mệt rồi, quá mỏi rồi, tôi sẽ đi ngủ 1 chút',
@@ -232,7 +233,7 @@ Luôn trả lời ngắn gọn, tự nhiên như đang nói chuyện, không ch�
   mapContent(contents: any[]) {
     return contents.map((item) => {
       return {
-        role: item.model === 'user' ? 'user' : 'model',
+        role: item.role === 'user' ? 'user' : 'model',
         parts: [
           {
             text: item.text ?? '',
