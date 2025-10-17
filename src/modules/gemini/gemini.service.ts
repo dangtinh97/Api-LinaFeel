@@ -74,18 +74,27 @@ export class GeminiService {
 
   async createContents({ contents, key, name, personality }) {
     const url =
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
     contents = this.mapContent(contents);
+
+    const prompt = `
+Bạn là trợ lý ảo thông minh tên Emo.${
+      personality.trim() ? ` Bạn có tính cách ${personality.trim()}.` : ''
+    }${name.trim() ? ` Tên của tôi là ${name.trim()}.` : ''}
+Luôn trả lời ngắn gọn, tự nhiên như đang nói chuyện, không chứa ký tự đặc biệt hay emoji.
+`.trim();
     const body = {
       system_instruction: {
         parts: [
           {
-            text: `Bạn là trợ lý thông minh, tên của bạn là Emo.${personality.trim() != '' ? ` Bạn có 1 tính cách ${personality}.` : ''}.${name.trim() != '' ? ` Hãy gọi tôi là ${name}.` : ''}\nCâu trả lời dạng văn bản giọng nói (không có ký tự đặc biệt). Câu trả lời ngắn gọn.`,
+            text: prompt,
           },
         ],
       },
       contents: contents,
     };
+
+    console.log(JSON.stringify(body, null, 2));
 
     try {
       const curl = await lastValueFrom(
@@ -105,13 +114,16 @@ export class GeminiService {
       const text = _.get(
         curl.data,
         'candidates.0.content.parts.0.text',
-        'Emo quá mệt rồi, quá mỏi rồi, tôi sẽ đi ngủ 1 chút',
-      ).replaceAll('\n', '');
+        'Emo quá mệt rồi, quá mỏi rồi, tôi sẽ đi ngủ 1 chút.',
+      )
+        .replaceAll('\n', '')
+        .trim();
       return {
         status: 200,
         text: text,
       };
     } catch (e) {
+      console.log(e.message);
       return {
         status: 403,
         text: 'Emo quá mệt rồi, quá mỏi rồi, tôi sẽ đi ngủ 1 chút',
