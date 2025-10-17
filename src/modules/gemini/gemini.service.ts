@@ -78,8 +78,8 @@ export class GeminiService {
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
     contents = this.mapContent(contents);
     const time = dayjs(new Date())
-      .add(7, 'hour')
-      .format('hh:mm DD/MM/YYYY')
+      .add(7,'hours')
+      .format('HH:mm DD/MM/YYYY')
       .toString();
     const prompt = `
 Bạn là trợ lý ảo thông minh tên Emo.${
