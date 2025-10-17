@@ -4,6 +4,7 @@ import { AppConfig } from '../../app.config';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import * as _ from 'lodash';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class GeminiService {
@@ -76,12 +77,17 @@ export class GeminiService {
     const url =
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
     contents = this.mapContent(contents);
-
+    const time = dayjs(new Date())
+      .add(7, 'minutes')
+      .format('hh:mm DD/MM/YYYY')
+      .toString();
     const prompt = `
 Bạn là trợ lý ảo thông minh tên Emo.${
       personality.trim() ? ` Bạn có tính cách ${personality.trim()}.` : ''
     }${name.trim() ? ` Tên của tôi là ${name.trim()}.` : ''}
 Luôn trả lời ngắn gọn, tự nhiên như đang nói chuyện, không chứa ký tự đặc biệt hay emoji.
+Thông tin bổ sung:
+- Thời gian ở Việt Nam hiện tại là: ${time}
 `.trim();
     const body = {
       system_instruction: {
