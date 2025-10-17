@@ -78,7 +78,7 @@ export class GeminiService {
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
     contents = this.mapContent(contents);
     const time = dayjs(new Date())
-      .add(7, 'minutes')
+      .add(7, 'hours')
       .format('hh:mm DD/MM/YYYY')
       .toString();
     const prompt = `
