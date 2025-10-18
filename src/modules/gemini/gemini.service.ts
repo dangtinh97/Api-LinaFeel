@@ -126,7 +126,7 @@ Thông tin bổ sung:
         .trim();
       return {
         status: 200,
-        text: text,
+        text: text.replaceAll('*',''),
       };
     } catch (e) {
       console.log(e.message);
