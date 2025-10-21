@@ -5,12 +5,16 @@ import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import * as _ from 'lodash';
 import * as dayjs from 'dayjs';
+import { CrawlService } from '../crawl/crawl.service';
+import { GOLD_KEYWORDS, NEWS } from '../../common/keyword';
+import { uuidv4 } from '../../common';
 
 @Injectable()
 export class GeminiService {
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
+    private readonly crawlService: CrawlService,
   ) {}
 
   async chat(messages: any[]) {
@@ -61,16 +65,69 @@ export class GeminiService {
     ).replaceAll('\n', '');
   }
 
-  async emoQA({ contents, key, name, personality }) {
+  async emoQA({ contents, key, name, personality, session_id }) {
+    const userAsk = contents.filter((item) => item.role === 'user');
+    session_id = session_id ?? uuidv4();
+    if (userAsk.length == 0)
+      return {
+        status: 204,
+        text: 'Xin chào mình là emo bạn có muốn trò chuyện cùng mình không?',
+        session_id: session_id,
+      };
+    if (this.isAskGoldPrice(userAsk[userAsk.length - 1].text)) {
+      const ansGold = await this.crawlService.goldPrice();
+      return {
+        status: ansGold ? 200 : 400,
+        text: ansGold ?? 'Hiện tại chưa có thông tin giá vàng',
+        session_id: session_id,
+      };
+    }
     const callAgent = await this.curlAgent(
-      contents[contents.length - 1].text,
+      session_id,
+      userAsk[userAsk.length - 1].text,
       key,
     );
-    if (callAgent.args || callAgent.status === 403) {
-      return callAgent;
+    if (callAgent.status == 403)
+      return {
+        ...callAgent,
+      };
+    if (
+      callAgent.args &&
+      ['open_music', 'take_photo'].includes(callAgent.name)
+    ) {
+      return {
+        ...callAgent,
+        session_id: session_id,
+      };
     }
 
-    return await this.createContents({ contents, key, name, personality });
+    if (callAgent.name === 'read_news') {
+      const news = await this.crawlService.getRandomNews(
+        callAgent.args.category ?? 'ALL',
+      );
+      console.log(news);
+      return {
+        status: 200,
+        text: this.formatNews(news),
+        session_id: session_id,
+      };
+    }
+
+    const content = await this.createContents({
+      contents,
+      key,
+      name,
+      personality,
+    });
+
+    return {
+      ...content,
+      session_id: session_id,
+    };
+  }
+
+  formatNews({ category, title, description }) {
+    return `Tin ${category.toLowerCase()}: ${title}. ${description}`;
   }
 
   async createContents({ contents, key, name, personality }) {
@@ -78,7 +135,7 @@ export class GeminiService {
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
     contents = this.mapContent(contents);
     const time = dayjs(new Date())
-      .add(7,'hours')
+      .add(7, 'hours')
       .format('HH:mm DD/MM/YYYY')
       .toString();
     const prompt = `
@@ -126,7 +183,7 @@ Thông tin bổ sung:
         .trim();
       return {
         status: 200,
-        text: text.replaceAll('*',''),
+        text: text.replaceAll('*', ''),
       };
     } catch (e) {
       console.log(e.message);
@@ -136,10 +193,9 @@ Thông tin bổ sung:
       };
     }
   }
-
-  async curlAgent(text: string, apiKey: string) {
+  async curlAgent(sessionId: string, text: string, apiKey: string) {
     let action = false;
-    ['mở', 'phát', 'bật', 'cho tôi', 'tôi muốn', 'nghe'].forEach(
+    ['mở', 'phát', 'bật', 'cho tôi', 'tôi muốn', 'nghe', 'tìm'].forEach(
       (itemAction) => {
         if (text.toLowerCase().indexOf(itemAction) !== -1) {
           action = true;
@@ -148,12 +204,18 @@ Thông tin bổ sung:
     );
     let intent = '';
     const allowResultTakePhoto = ['chụp ảnh', 'chụp hình', 'máy ảnh'];
-    [...allowResultTakePhoto, 'bài hát', 'ca khúc'].forEach((itemIntent) => {
+    [
+      ...allowResultTakePhoto,
+      'bài hát',
+      'ca khúc',
+      'tin tức',
+      'bài báo',
+    ].forEach((itemIntent) => {
       if (text.toLowerCase().indexOf(itemIntent) !== -1) {
         intent = itemIntent;
       }
     });
-    if (!action) {
+    if (!action && !intent) {
       return {
         status: 204,
         text: '',
@@ -166,9 +228,11 @@ Thông tin bổ sung:
           intent: intent,
         },
       };
-
+    const categoryNews = NEWS.map((item) => {
+      return item.category;
+    });
     const url =
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
     const body = {
       contents: [
         {
@@ -198,10 +262,33 @@ Thông tin bổ sung:
                 required: ['name_song'],
               },
             },
+            {
+              name: 'read_news',
+              description:
+                'Content analysis to return news opening requests, news categories',
+              parameters: {
+                type: 'object',
+                properties: {
+                  is_read: {
+                    type: 'boolean',
+                    description:
+                      'Is the request to open the news, open the newspaper?',
+                  },
+                  category: {
+                    type: 'string',
+                    enum: categoryNews.concat('ALL'),
+                    description:
+                      "Information on news type. If no category is selected, return 'ALL'",
+                  },
+                },
+                required: ['is_read'],
+              },
+            },
           ],
         },
       ],
     };
+    console.log(JSON.stringify(body, null, 2));
     try {
       const curl = await lastValueFrom(
         this.httpService.post(url, body, {
@@ -211,22 +298,17 @@ Thông tin bổ sung:
           },
         }),
       );
-      console.log(curl.data);
+      console.log(JSON.stringify(curl.data, null, 2));
       if (curl.status != 200) {
         return {
           status: curl.status,
           text: 'Emo quá mệt rồi, quá mỏi rồi, tôi sẽ đi ngủ 1 chút',
         };
       }
-      const functionCall = _.get(
-        curl.data,
-        'candidates.0.content.parts.0.functionCall',
-        {
-          status: 204,
-          text: '',
-        },
-      );
-      return functionCall;
+      return _.get(curl.data, 'candidates.0.content.parts.0.functionCall', {
+        status: 204,
+        text: '',
+      });
     } catch (e) {
       console.log(e.message);
       return {
@@ -247,5 +329,10 @@ Thông tin bổ sung:
         ],
       };
     });
+  }
+
+  isAskGoldPrice(message: string) {
+    const text = message.toLowerCase();
+    return GOLD_KEYWORDS.some((keyword: string) => text.includes(keyword));
   }
 }
