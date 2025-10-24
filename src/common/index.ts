@@ -48,7 +48,7 @@ export const uuidv4 = (): string => {
 
 export const payloadFromToken = (jwtToken: string) => {
   try {
-    const parts = jwtToken.split('.');
+    const parts = jwtToken.replace('Bearer ','').split('.');
     const encodedPayload = parts[1];
 
     // Decode the Base64Url encoded payload

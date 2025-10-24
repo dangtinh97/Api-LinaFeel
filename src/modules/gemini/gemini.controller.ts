@@ -14,8 +14,13 @@ export class GeminiController {
   @Post('/emo-question-answer')
   async emoQA(@Req() { body, headers }: any) {
     const { authorization } = headers;
+    console.log(headers);
     const payload = payloadFromToken(authorization);
-    const result = await this.geminiService.emoQA(body);
+    console.log(payload)
+    const result = await this.geminiService.emoQA({
+      ...body,
+      user_oid: payload.sub,
+    });
     const userAsk = (body.contents ?? []).filter(
       (item) => item.role === 'user',
     );

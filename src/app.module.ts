@@ -17,6 +17,7 @@ import { BillingModule } from './modules/billing/billing.module';
 import { KeyAppModule } from './modules/key-app/key-app.module';
 import { GeminiModule } from './modules/gemini/gemini.module';
 import { CrawlModule } from './modules/crawl/crawl.module';
+import { MoneyJournalModule } from './modules/money-journal/money-journal.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { CrawlModule } from './modules/crawl/crawl.module';
     BillingModule,
     GeminiModule,
     CrawlModule,
+    MoneyJournalModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService, JwtStrategy, ConfigService],

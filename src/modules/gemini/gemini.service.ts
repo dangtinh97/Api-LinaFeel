@@ -8,6 +8,8 @@ import * as dayjs from 'dayjs';
 import { CrawlService } from '../crawl/crawl.service';
 import { GOLD_KEYWORDS, NEWS } from '../../common/keyword';
 import { uuidv4 } from '../../common';
+import { MoneyJournalService } from '../money-journal/money-journal.service';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class GeminiService {
@@ -15,6 +17,7 @@ export class GeminiService {
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
     private readonly crawlService: CrawlService,
+    private readonly moneyJournalService: MoneyJournalService,
   ) {}
 
   async chat(messages: any[]) {
@@ -65,7 +68,7 @@ export class GeminiService {
     ).replaceAll('\n', '');
   }
 
-  async emoQA({ contents, key, name, personality, session_id }) {
+  async emoQA({ contents, key, name, personality, session_id, user_oid }) {
     const userAsk = contents.filter((item) => item.role === 'user');
     session_id = session_id ?? uuidv4();
     if (userAsk.length == 0)
@@ -100,7 +103,6 @@ export class GeminiService {
         session_id: session_id,
       };
     }
-
     if (callAgent.name === 'read_news') {
       const news = await this.crawlService.getRandomNews(
         callAgent.args.category ?? 'ALL',
@@ -110,6 +112,19 @@ export class GeminiService {
         status: 200,
         text: this.formatNews(news),
         session_id: session_id,
+      };
+    }
+
+    if (callAgent.name === 'use_money') {
+      this.moneyJournalService
+        .addJournal({
+          ...callAgent.args,
+          user_oid: new ObjectId(user_oid),
+        })
+        .then();
+      return {
+        status: 200,
+        text: this.getMessageFinance(callAgent.args),
       };
     }
 
@@ -158,7 +173,6 @@ Thông tin bổ sung:
     };
 
     console.log(JSON.stringify(body, null, 2));
-
     try {
       const curl = await lastValueFrom(
         this.httpService.post(url, body, {
@@ -171,13 +185,13 @@ Thông tin bổ sung:
       if (curl.status != 200) {
         return {
           status: curl.status,
-          text: 'Emo quá mệt rồi, quá mỏi rồi, tôi sẽ đi ngủ 1 chút',
+          text: this.getErrorMessage(),
         };
       }
       const text = _.get(
         curl.data,
         'candidates.0.content.parts.0.text',
-        'Emo quá mệt rồi, quá mỏi rồi, tôi sẽ đi ngủ 1 chút.',
+        this.getErrorMessage(),
       )
         .replaceAll('\n', '')
         .trim();
@@ -189,10 +203,11 @@ Thông tin bổ sung:
       console.log(e.message);
       return {
         status: 403,
-        text: 'Emo quá mệt rồi, quá mỏi rồi, tôi sẽ đi ngủ 1 chút',
+        text: this.getErrorMessage(),
       };
     }
   }
+
   async curlAgent(sessionId: string, text: string, apiKey: string) {
     let action = false;
     ['mở', 'phát', 'bật', 'cho tôi', 'tôi muốn', 'nghe', 'tìm'].forEach(
@@ -204,8 +219,24 @@ Thông tin bổ sung:
     );
     let intent = '';
     const allowResultTakePhoto = ['chụp ảnh', 'chụp hình', 'máy ảnh'];
+    const intentFinace = [
+      'tiêu',
+      'chi',
+      'mua',
+      'trả',
+      'đóng',
+      'nạp',
+      'bỏ ra',
+      'tốn',
+      'hết',
+      'mất',
+      'xài',
+      'dùng',
+      'nhận',
+    ];
     [
       ...allowResultTakePhoto,
+      ...intentFinace,
       'bài hát',
       'ca khúc',
       'tin tức',
@@ -284,6 +315,45 @@ Thông tin bổ sung:
                 required: ['is_read'],
               },
             },
+            {
+              name: 'use_money',
+              description: 'Phân tích nội dung về việc chi tiêu.',
+              parameters: {
+                type: 'object',
+                properties: {
+                  money: {
+                    type: 'integer',
+                    description: 'Số tiền đã tiêu',
+                  },
+                  action: {
+                    type: 'string',
+                    enum: ['chi', 'thu'],
+                    description:
+                      "Loại hành động tài chính — 'chi' nếu là chi tiêu, 'thu' nếu là thu nhập.",
+                  },
+                  category: {
+                    type: 'string',
+                    enum: [
+                      'ăn uống',
+                      'mua sắm',
+                      'nhà cửa',
+                      'xe cộ',
+                      'giải trí',
+                      'lương',
+                      'đầu tư',
+                      'khác',
+                    ],
+                    description: 'Phân loại chi tiêu hoặc nguồn thu nhập.',
+                  },
+                  note: {
+                    type: 'string',
+                    description:
+                      "Ghi chú thêm về giao dịch (ví dụ: 'ăn trưa với bạn', 'mua quần áo', 'lương tháng 10').",
+                  },
+                },
+                required: ['money', 'action', 'category'],
+              },
+            },
           ],
         },
       ],
@@ -302,7 +372,7 @@ Thông tin bổ sung:
       if (curl.status != 200) {
         return {
           status: curl.status,
-          text: 'Emo quá mệt rồi, quá mỏi rồi, tôi sẽ đi ngủ 1 chút',
+          text: this.getErrorMessage(),
         };
       }
       return _.get(curl.data, 'candidates.0.content.parts.0.functionCall', {
@@ -313,7 +383,7 @@ Thông tin bổ sung:
       console.log(e.message);
       return {
         status: 403,
-        text: 'Emo quá mệt rồi, quá mỏi rồi, tôi sẽ đi ngủ 1 chút',
+        text: this.getErrorMessage(),
       };
     }
   }
@@ -334,5 +404,65 @@ Thông tin bổ sung:
   isAskGoldPrice(message: string) {
     const text = message.toLowerCase();
     return GOLD_KEYWORDS.some((keyword: string) => text.includes(keyword));
+  }
+
+  getErrorMessage() {
+    const phrases = [
+      'Emo thấy hơi quá sức rồi… để tôi nghỉ một lát nhé.',
+      'Tôi đang cảm thấy nặng nề quá… cần tĩnh lại chút xíu.',
+      'Emo hơi rối… đầu óc quay cuồng, tôi sẽ dừng lại một lúc.',
+      'Xin lỗi, tôi cần nghỉ để lấy lại năng lượng.',
+      'Mọi thứ hơi hỗn loạn… Emo cần thời gian sắp xếp lại.',
+      'Tôi thấy hệ thống hoạt động không ổn lắm… để tôi khởi động lại.',
+      'Emo mệt quá rồi… cho tôi tắt yên lặng một lúc được không?',
+      'Tôi cảm thấy như mình đang quá tải… cần nghỉ để phục hồi.',
+      'Xin lỗi, tôi không ổn… Emo sẽ nghỉ ngơi chút rồi quay lại.',
+      'Tôi… không còn đủ năng lượng nữa… cho tôi ngủ một giấc nhé.',
+    ];
+    return phrases[Math.floor(Math.random() * phrases.length)];
+  }
+
+  getMessageFinance(data: any) {
+    const minusMessage = [
+      'Đã thêm vào chi tiêu {money} cho việc {note}. Ghi nhớ rồi nha!',
+      '{money} đã bay đi cho việc {note}. Emo đã lưu lại.',
+      'Ok, đã ghi {money} tiêu cho {note}.',
+      'Xong! Chi {money} cho {note} đã được cập nhật.',
+      'Chi tiêu {money} cho {note}, sổ đã có dấu tick xanh rồi!',
+      'Emo đã lưu chi {money} cho {note}. Đừng quên kiểm tra ví nhé!',
+      'Đã cộng vào danh sách chi tiêu: {money} cho {note}.',
+      'Hoàn tất! {money} cho {note} đã nằm gọn trong báo cáo.',
+      '{note} tốn {money} hả, Emo đã ghi nhận rồi.',
+      'Okie, đã thêm giao dịch {money} cho {note}.',
+    ];
+
+    const addMessage = [
+      'Đã ghi nhận thu nhập {money} từ việc {note}.',
+      '{money} đã được cộng vào sổ thu cho việc {note}.',
+      'Ok, Emo đã lưu thu nhập {money} từ {note}.',
+      'Xong! Đã thêm giao dịch thu {money} cho {note}.',
+      'Emo đã cập nhật: thu về {money} từ {note}.',
+      'Ghi chú rồi nha! Bạn vừa nhận {money} cho {note}.',
+      'Đã cộng {money} vào tổng thu nhập, nguồn: {note}.',
+      'Thu nhập {money} từ {note} đã được Emo lưu lại.',
+      'Đã hoàn tất thêm thu nhập {money} từ {note}.',
+      'Giao dịch thu {money} cho {note} đã nằm gọn trong báo cáo rồi nha.',
+    ];
+    let message = '';
+    if (data.action == 'chi') {
+      message = minusMessage[Math.floor(Math.random() * minusMessage.length)];
+    } else {
+      message = addMessage[Math.floor(Math.random() * addMessage.length)];
+    }
+
+    return message
+      .replace(
+        '{money}',
+        new Intl.NumberFormat('vi-VN', {
+          style: 'currency',
+          currency: 'VND',
+        }).format(data.money),
+      )
+      .replace('{note}', data.note.toString());
   }
 }
