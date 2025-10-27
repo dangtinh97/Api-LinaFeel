@@ -6,6 +6,7 @@ import { Admin } from './schemas/admin.schema';
 import { JwtService } from '@nestjs/jwt';
 import { HistoryBilling } from '../billing/schemas/history-billing.schema';
 import { KeyAppService } from '../key-app/key-app.service';
+import { UploadService } from '../upload/upload.service';
 
 @Injectable()
 export class AdminService {

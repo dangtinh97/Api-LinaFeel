@@ -60,4 +60,14 @@ export class KeyAppService {
       })
       .exec();
   }
+
+  async saveKey(data: any){
+    return await this.keyAppModel.create({
+      order_id: data.order_id,
+      gemini_key: data.gemini_key,
+      picovoice_key: data.picovoice_key,
+      picovoice_file: data.picovoice_file,
+      use: false,
+    });
+  }
 }

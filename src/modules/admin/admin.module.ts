@@ -11,6 +11,7 @@ import {
   HistoryBilling,
   HistoryBillingSchema,
 } from '../billing/schemas/history-billing.schema';
+import { UploadModule } from '../upload/upload.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import {
       inject: [ConfigService],
     }),
     KeyAppModule,
+    UploadModule,
   ],
   controllers: [AdminController],
   providers: [AdminService],

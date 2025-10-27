@@ -3,6 +3,7 @@ import { SchemaTypes } from 'mongoose';
 
 export enum AppSettingKey{
   APP_VERSION = 'APP_VERSION',
+  AWS = 'AWS',
 }
 
 @Schema({
