@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng giao dịch mua - Admin</title>
+  <style>
+      * {
+          box-sizing: border-box;
+          font-family: 'Segoe UI', Tahoma, sans-serif;
+      }
+
+      body {
+          background: linear-gradient(135deg, #1f2937, #111827);
+          margin: 0;
+          padding: 40px 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          color: #f3f4f6;
+          min-height: 100vh;
+      }
+
+      h2 {
+          text-align: center;
+          margin-bottom: 30px;
+          color: #fff;
+          letter-spacing: 0.5px;
+      }
+
+      .table-container {
+          width: 100%;
+          max-width: 900px;
+          background: #ffffff10;
+          backdrop-filter: blur(12px);
+          border: 1px solid #ffffff22;
+          border-radius: 16px;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+          overflow: hidden;
+          animation: fadeIn 0.5s ease;
+      }
+
+      .table-wrapper {
+          width: 100%;
+          overflow-x: auto;
+      }
+
+      table {
+          width: 100%;
+          border-collapse: collapse;
+          min-width: 600px;
+      }
+
+      thead {
+          background: #374151;
+      }
+
+      th, td {
+          padding: 16px 18px;
+          text-align: left;
+          font-size: 15px;
+          white-space: nowrap;
+      }
+
+      th {
+          color: #e5e7eb;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+      }
+
+      tbody tr {
+          transition: background 0.25s;
+      }
+
+      tbody tr:hover {
+          background-color: #ffffff15;
+      }
+
+      .status {
+          padding: 6px 12px;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 13px;
+          display: inline-block;
+      }
+
+      .processed {
+          background-color: rgba(34,197,94,0.2);
+          color: #4ade80;
+      }
+
+      .pending {
+          background-color: rgba(239,68,68,0.2);
+          color: #f87171;
+      }
+
+      .used {
+          background-color: rgba(59,130,246,0.2);
+          color: #60a5fa;
+      }
+
+      .not-used {
+          background-color: rgba(234,179,8,0.2);
+          color: #facc15;
+      }
+
+      .action-btn {
+          padding: 8px 14px;
+          border: none;
+          border-radius: 8px;
+          background-color: #3b82f6;
+          color: #fff;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.25s ease;
+      }
+
+      .action-btn:hover {
+          background-color: #2563eb;
+          transform: translateY(-1px);
+          box-shadow: 0 0 8px #3b82f6aa;
+      }
+
+      .disabled-btn {
+          background-color: #6b7280;
+          cursor: not-allowed;
+          opacity: 0.7;
+      }
+
+      @keyframes fadeIn {
+          from {opacity: 0; transform: translateY(10px);}
+          to {opacity: 1; transform: translateY(0);}
+      }
+
+      /* Phản hồi khi bấm nút */
+      .btn-clicked {
+          background-color: #10b981 !important;
+          box-shadow: 0 0 12px #10b98188;
+      }
+
+      /* Responsive cho mobile */
+      @media (max-width: 600px) {
+          body {
+              padding: 20px 10px;
+          }
+
+          h2 {
+              font-size: 20px;
+              margin-bottom: 20px;
+          }
+
+          th, td {
+              padding: 12px 10px;
+              font-size: 14px;
+          }
+
+          .action-btn {
+              padding: 6px 10px;
+              font-size: 13px;
+          }
+
+          .status {
+              padding: 4px 8px;
+              font-size: 12px;
+          }
+      }
+  </style>
+</head>
+<body>
+<h2>Danh sách giao dịch mua</h2>
+
+<div class="table-container">
+  <div class="table-wrapper">
+    <table>
+      <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Đã xử lý</th>
+        <th>Đã sử dụng</th>
+        <th>Hành động</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>#ORD-1023</td>
+        <td><span class="status processed">Đã xử lý</span></td>
+        <td><span class="status used">Đã sử dụng</span></td>
+        <td><button class="action-btn disabled-btn" disabled>Hoàn tất</button></td>
+      </tr>
+
+      <tr>
+        <td>#ORD-1045</td>
+        <td><span class="status pending">Chưa xử lý</span></td>
+        <td><span class="status not-used">Chưa sử dụng</span></td>
+        <td><button class="action-btn" onclick="goToDetail(this, '#ORD-1045')">Đi đến chi tiết</button></td>
+      </tr>
+
+      <tr>
+        <td>#ORD-1060</td>
+        <td><span class="status processed">Đã xử lý</span></td>
+        <td><span class="status not-used">Chưa sử dụng</span></td>
+        <td><button class="action-btn" onclick="goToDetail(this, '#ORD-1060')">Đi đến chi tiết</button></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  function goToDetail(button, orderId) {
+    button.classList.add('btn-clicked');
+    button.innerText = 'Đang mở...';
+    setTimeout(() => {
+      window.location.href = `/admin/order/${orderId.replace('#', '')}`;
+    }, 800);
+  }
+</script>
+</body>
+</html>

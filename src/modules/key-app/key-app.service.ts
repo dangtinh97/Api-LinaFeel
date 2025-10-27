@@ -50,4 +50,14 @@ export class KeyAppService {
       )
       .exec();
   }
+
+  async getAllByOrderIds(orderIds: string[]) {
+    return await this.keyAppModel
+      .find({
+        order_id: {
+          $in: orderIds,
+        },
+      })
+      .exec();
+  }
 }

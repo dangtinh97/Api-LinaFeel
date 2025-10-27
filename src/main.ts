@@ -8,7 +8,7 @@ import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { UnauthorizedExceptionFilter } from './exception-filter/UnauthorizedExceptionFilter';
 import { NotFoundExceptionFilter } from './exception-filter/NotFoundExceptionFilter';
 import { join } from 'path';
-import * as hbs from 'hbs';
+import * as cookieParser from 'cookie-parser';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
@@ -26,6 +26,7 @@ async function bootstrap() {
   app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
   app.setBaseViewsDir(join(__dirname, '..', 'views')); // Thư mục chứa file HTML
   app.setViewEngine('hbs'); // Sử dụng Handlebars
+  app.use(cookieParser());
   await app.listen(port);
   logger.log('App running port: ' + port);
 }
