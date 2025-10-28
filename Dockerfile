@@ -35,7 +35,6 @@ COPY --from=builder /app/package.json /app/pnpm-lock.yaml ./
 COPY --from=builder /app/tsconfig.json /app/tsconfig.build.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/.env ./.env
 COPY --from=builder /app/certs ./certs
 COPY --from=builder /app/views ./views
 # Expose cổng ứng dụng
@@ -45,4 +44,4 @@ EXPOSE 3000
 ENV NODE_ENV=production
 
 # Lệnh chạy app
-CMD ["pnpm", "start"]
+CMD ["node", "dist/main.js"]
