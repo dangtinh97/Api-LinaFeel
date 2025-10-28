@@ -15,6 +15,7 @@ import { GeminiModule } from './modules/gemini/gemini.module';
 import { CrawlModule } from './modules/crawl/crawl.module';
 import { MoneyJournalModule } from './modules/money-journal/money-journal.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { KeyAppModule } from './modules/key-app/key-app.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { AdminModule } from './modules/admin/admin.module';
     CrawlModule,
     MoneyJournalModule,
     AdminModule,
+    KeyAppModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService, JwtStrategy, ConfigService],

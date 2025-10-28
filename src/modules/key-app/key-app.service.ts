@@ -61,7 +61,7 @@ export class KeyAppService {
       .exec();
   }
 
-  async saveKey(data: any){
+  async saveKey(data: any) {
     return await this.keyAppModel.create({
       order_id: data.order_id,
       gemini_key: data.gemini_key,
@@ -69,5 +69,20 @@ export class KeyAppService {
       picovoice_file: data.picovoice_file,
       use: false,
     });
+  }
+
+  async setStatus(key: string, status: boolean) {
+    return await this.keyAppModel
+      .findOneAndUpdate(
+        {
+          picovoice_key: key,
+        },
+        {
+          $set: {
+            use: status,
+          },
+        },
+      )
+      .exec();
   }
 }
