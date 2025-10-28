@@ -15,21 +15,6 @@ export class KeyAppService {
       order_id: orderId,
     });
     if (find) {
-      await this.keyAppModel
-        .findOneAndUpdate(
-          {
-            order_id: orderId,
-          },
-          {
-            $set: {
-              use: true,
-            },
-          },
-          {
-            returnDocument: 'after',
-          },
-        )
-        .exec();
       return find;
     }
     return await this.keyAppModel
