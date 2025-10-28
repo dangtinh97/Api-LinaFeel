@@ -35,7 +35,6 @@ COPY --from=builder /app/package.json /app/pnpm-lock.yaml ./
 COPY --from=builder /app/tsconfig.json /app/tsconfig.build.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/certs ./certs
 COPY --from=builder /app/views ./views
 # Expose cổng ứng dụng
 EXPOSE 3000
