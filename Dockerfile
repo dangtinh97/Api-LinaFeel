@@ -28,7 +28,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 # Cài lại pnpm (tùy, có thể bỏ nếu bạn start bằng node)
-RUN npm install -g pnpm
+#RUN npm install -g pnpm
 
 # Copy file cần thiết từ build stage
 COPY --from=builder /app/package.json /app/pnpm-lock.yaml ./
