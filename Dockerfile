@@ -4,7 +4,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Tăng giới hạn bộ nhớ để tránh lỗi heap out of memory khi build
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV NODE_OPTIONS="--max-old-space-size=5140"
 
 # Cài pnpm
 RUN npm install -g pnpm
