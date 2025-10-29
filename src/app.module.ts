@@ -16,6 +16,7 @@ import { CrawlModule } from './modules/crawl/crawl.module';
 import { MoneyJournalModule } from './modules/money-journal/money-journal.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { KeyAppModule } from './modules/key-app/key-app.module';
+import { EdgeTtsModule } from './modules/edge-tts/edge-tts.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { KeyAppModule } from './modules/key-app/key-app.module';
     MoneyJournalModule,
     AdminModule,
     KeyAppModule,
+    EdgeTtsModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService, JwtStrategy, ConfigService],
