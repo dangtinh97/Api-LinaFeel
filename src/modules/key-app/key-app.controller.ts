@@ -1,4 +1,4 @@
-import { Controller, Post, Req } from '@nestjs/common';
+import { Controller, Get, Post, Req } from '@nestjs/common';
 import { KeyAppService } from './key-app.service';
 
 @Controller('/key-app')
@@ -9,5 +9,10 @@ export class KeyAppController {
   async setStatus(@Req() { body }: any) {
     const { key, status } = body;
     return await this.keyAppService.setStatus(key, status);
+  }
+  
+  @Get('/checking')
+  async checking(){
+    return await this.keyAppService.checkAny();
   }
 }

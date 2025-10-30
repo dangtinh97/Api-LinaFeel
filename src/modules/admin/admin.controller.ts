@@ -65,6 +65,11 @@ export class AdminController {
       order_id: id,
     };
   }
+  @Get('/order/:id/checking')
+  async checking(@Param('id') id: string, @Res() res: any) {
+    await this.keyAppService.checkKey(id);
+    res.redirect('/admin/purchases');
+  }
 
   @Post('sync-order')
   @UseInterceptors(FileInterceptor('file'))

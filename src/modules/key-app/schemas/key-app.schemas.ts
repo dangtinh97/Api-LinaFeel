@@ -18,6 +18,11 @@ export class KeyApp {
 
   @Prop({ default: false })
   use: boolean;
+  @Prop({ default: null })
+  active: boolean;
+
+  @Prop()
+  time_last_check: Date;
 }
 
 export const KeyAppSchema = SchemaFactory.createForClass(KeyApp);
