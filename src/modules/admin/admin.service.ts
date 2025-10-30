@@ -57,7 +57,7 @@ export class AdminService {
       item['is_used'] = item['is_processed']
         ? keys.find((key) => key.order_id == orderId).use
         : false;
-      const active = keys.find((key) => key.order_id == orderId).active ?? null;
+      const active = keys.find((key) => key.order_id == orderId)?.active ?? null;
       item['color'] =
         active === true ? 'green' : active === false ? 'red' : 'inherit';
 

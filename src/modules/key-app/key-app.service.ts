@@ -53,6 +53,8 @@ export class KeyAppService {
       picovoice_key: data.picovoice_key,
       picovoice_file: data.picovoice_file,
       use: false,
+      time_last_check: new Date(),
+      active: null,
     });
   }
 
