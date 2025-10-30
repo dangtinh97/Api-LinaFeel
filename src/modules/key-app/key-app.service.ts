@@ -166,7 +166,7 @@ export class KeyAppService {
     const getCheck = await this.keyAppModel.findOne({
       active: true,
       time_last_check: {
-        $lt: new Date(new Date().getTime() - 1000 * 60 * 60),
+        $lt: new Date(new Date().getTime() - 1000 * 60 * 60 * 2),
       },
     });
     if (!getCheck) {
