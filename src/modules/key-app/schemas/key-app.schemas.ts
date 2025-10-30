@@ -23,6 +23,9 @@ export class KeyApp {
 
   @Prop()
   time_last_check: Date;
+  
+  @Prop()
+  email: string;
 }
 
 export const KeyAppSchema = SchemaFactory.createForClass(KeyApp);

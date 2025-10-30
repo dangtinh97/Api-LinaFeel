@@ -55,6 +55,7 @@ export class KeyAppService {
       use: false,
       time_last_check: new Date(),
       active: null,
+      email: data.email,
     });
   }
 
