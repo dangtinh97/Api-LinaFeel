@@ -7,6 +7,7 @@ import { KeyAppService } from '../key-app/key-app.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { HistoryBilling } from './schemas/history-billing.schema';
 import { Model } from 'mongoose';
+
 @Injectable()
 export class BillingService {
   constructor(
@@ -47,7 +48,11 @@ export class BillingService {
           res.data.orderId,
         );
 
-        return { valid: true, ...(info?._doc ?? {}) };
+        return {
+          valid: true,
+          order_id: res.data.orderId,
+          ...(info?._doc ?? {}),
+        };
       } else {
         return { valid: false, data: {} };
       }

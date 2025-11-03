@@ -7,6 +7,7 @@ import {
   HistoryBilling,
   HistoryBillingSchema,
 } from './schemas/history-billing.schema';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import {
       },
     ]),
     KeyAppModule,
+    UserModule,
   ],
   controllers: [BillingController],
   providers: [BillingService],

@@ -31,6 +31,9 @@ export class User extends BaseModel {
 
   @Prop({ default: 'DEFAULT' })
   voice: string;
+
+  @Prop()
+  order_id: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

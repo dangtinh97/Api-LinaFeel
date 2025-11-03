@@ -64,4 +64,27 @@ export class UserService {
       })
       .exec();
   }
+
+  async updateTime(userOid: string, orderId: string) {
+    const find = await this.userModel.findOne({
+      order_id: orderId,
+    });
+    if (find) {
+      return;
+    }
+    await this.userModel
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(userOid),
+        },
+        {
+          $set: {
+            expired: dayjs().add(10, 'years').toDate(),
+            order_id: orderId,
+          },
+        },
+      )
+      .exec();
+    return;
+  }
 }
