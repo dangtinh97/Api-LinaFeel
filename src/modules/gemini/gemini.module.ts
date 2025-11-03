@@ -6,6 +6,8 @@ import { CrawlModule } from '../crawl/crawl.module';
 import { LogModule } from '../log/log.module';
 import { MoneyJournalModule } from '../money-journal/money-journal.module';
 import { AppConfigModule } from '../app-config/app-config.module';
+import { UserService } from '../user/user.service';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -14,6 +16,7 @@ import { AppConfigModule } from '../app-config/app-config.module';
     LogModule,
     MoneyJournalModule,
     AppConfigModule,
+    UserModule,
   ],
   exports: [GeminiService],
   providers: [GeminiService],

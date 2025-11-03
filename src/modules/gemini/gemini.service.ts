@@ -12,16 +12,17 @@ import { MoneyJournalService } from '../money-journal/money-journal.service';
 import { ObjectId } from 'mongodb';
 import { AppConfigService } from '../app-config/app-config.service';
 import { AppSettingKey } from '../app-config/schemas/app-setting.schema';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class GeminiService {
-  private geminiKey = '';
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
     private readonly crawlService: CrawlService,
     private readonly moneyJournalService: MoneyJournalService,
     private readonly appConfigService: AppConfigService,
+    private readonly userService: UserService,
   ) {}
 
   async chat(messages: any[]) {
@@ -73,9 +74,12 @@ export class GeminiService {
   }
 
   async emoQA({ contents, name, personality, session_id, user_oid }) {
-    this.geminiKey = await this.appConfigService.getByKeyConfig(
-      AppSettingKey.GEMINI_KEY_API,
-    );
+    let keyFindApiKey = AppSettingKey.GEMINI_KEY_API;
+    const user = await this.userService.infoUser(user_oid ?? new ObjectId());
+    if (user && user.expired.getTime() > new Date().getTime()) {
+      keyFindApiKey = AppSettingKey.GEMINI_KEY_API_VIP;
+    }
+    const key = await this.appConfigService.getByKeyConfig(keyFindApiKey);
     const userAsk = contents.filter((item) => item.role === 'user');
     session_id = session_id ?? uuidv4();
     if (userAsk.length == 0)
@@ -95,7 +99,7 @@ export class GeminiService {
     const callAgent = await this.curlAgent(
       session_id,
       userAsk[userAsk.length - 1].text,
-      this.geminiKey,
+      key,
     );
     if (callAgent.status == 403)
       return {
@@ -137,7 +141,7 @@ export class GeminiService {
 
     const content = await this.createContents({
       contents,
-      key: this.geminiKey,
+      key: key,
       name,
       personality,
     });
