@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { KeyApp } from './schemas/key-app.schemas';
 import { Model } from 'mongoose';
-import { Orca } from '@picovoice/orca-node';
+
 @Injectable()
 export class KeyAppService {
   constructor(
@@ -83,28 +83,10 @@ export class KeyAppService {
         message: 'not-error',
       };
     }
-    const key = findOrder.picovoice_key;
-    let active = false;
     try {
-      const orca = new Orca(key);
-      const { alignments } = orca.synthesize(this.wordRandom());
-      orca.release();
-      console.log();
-      active = alignments.length > 0;
     } catch (e) {
       console.log(e);
     }
-    await this.keyAppModel.findOneAndUpdate(
-      {
-        _id: findOrder._id,
-      },
-      {
-        $set: {
-          active: active,
-          time_last_check: new Date(),
-        },
-      },
-    );
     return true;
   }
 
