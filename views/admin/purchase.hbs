@@ -145,6 +145,9 @@
       .action-btn { padding: 6px 10px; font-size: 13px; }
       .status { padding: 4px 8px; font-size: 12px; }
     }
+
+    .text-green { color: green; }
+    .text-red { color: red; }
   </style>
 </head>
 <body>
@@ -164,7 +167,7 @@
         <tbody>
           {{#each data.list}}
             <tr>
-              <td>{{this.order_id}}</td>
+              <td style="color: {{this.color}}">{{this.order_id}}</td>
               <td>
                 {{#if this.is_processed}}
                   <span class="status processed">Đã xử lý</span>
@@ -181,7 +184,7 @@
               </td>
               <td>
                 {{#if this.is_processed}}
-                  <button class="action-btn disabled-btn" disabled>Hoàn tất</button>
+                  <button class="action-btn" onclick="goToChecking(this, '{{this.order_id}}')">Kiểm tra</button>
                 {{else}}
                   <button class="action-btn" onclick="goToDetail(this, '{{this.order_id}}')">
                     Đi đến chi tiết
@@ -203,6 +206,14 @@
         window.location.href = `/admin/order/${orderId}`;
       }, 800);
     }
+    function goToChecking(button, orderId) {
+      button.classList.add('btn-clicked');
+      button.innerText = 'Đang mở...';
+      setTimeout(() => {
+        window.location.href = `/admin/order/${orderId}/checking`;
+      }, 800);
+    }
+
   </script>
 </body>
 </html>

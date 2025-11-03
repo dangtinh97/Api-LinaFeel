@@ -46,6 +46,7 @@ export class AuthService {
       user_oid: user._id.toString(),
       username: username,
       token: token,
+      voice: user.voice ?? 'DEFAULT',
     };
   }
 }

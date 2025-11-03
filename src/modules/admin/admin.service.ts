@@ -49,16 +49,18 @@ export class AdminService {
     ]);
     const orderIds = orders.map((item) => item._id);
     const keys = await this.keyAppService.getAllByOrderIds(orderIds);
-    let result = [];
+    const result = [];
     orderIds.forEach((orderId) => {
-      let item = {};
+      const item = {};
       item['order_id'] = orderId;
-      item['is_processed'] = keys.find((key) => key.order_id == orderId)
-        ? true
-        : false;
+      item['is_processed'] = !!keys.find((key) => key.order_id == orderId);
       item['is_used'] = item['is_processed']
         ? keys.find((key) => key.order_id == orderId).use
         : false;
+      const active = keys.find((key) => key.order_id == orderId)?.active ?? null;
+      item['color'] =
+        active === true ? 'green' : active === false ? 'red' : 'inherit';
+
       result.push(item);
     });
     console.log(result);
