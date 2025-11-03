@@ -1,10 +1,12 @@
-import { Controller, Post, Req } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { GeminiService } from './gemini.service';
 import { LogService } from '../log/log.service';
 import { payloadFromToken } from '../../common';
 import { ObjectId } from 'mongodb';
+import { JwtAuthGuard } from '../../guards/auth.guard';
 
 @Controller('/gemini')
+@UseGuards(JwtAuthGuard)
 export class GeminiController {
   constructor(
     private geminiService: GeminiService,

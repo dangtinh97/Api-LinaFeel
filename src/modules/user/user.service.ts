@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class UserService {
@@ -28,6 +29,10 @@ export class UserService {
             app_version: appVersion,
             full_name: fullname,
           },
+          $setOnInsert: {
+            expired: dayjs().add(1, 'day').toDate(),
+            voice: 'DEFAULT',
+          },
         },
         { upsert: true, returnDocument: 'after' },
       )
@@ -49,6 +54,14 @@ export class UserService {
         ],
         { new: true },
       )
+      .exec();
+  }
+
+  async infoUser(userOid: string) {
+    return await this.userModel
+      .findOne({
+        _id: new ObjectId(userOid),
+      })
       .exec();
   }
 }

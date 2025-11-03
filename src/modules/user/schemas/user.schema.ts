@@ -25,6 +25,12 @@ export class User extends BaseModel {
 
   @Prop()
   full_name: string;
+
+  @Prop()
+  expired: Date;
+
+  @Prop({ default: 'DEFAULT' })
+  voice: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

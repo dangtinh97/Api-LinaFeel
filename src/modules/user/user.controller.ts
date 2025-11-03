@@ -1,4 +1,4 @@
-import { Controller, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../../guards/auth.guard';
 import { User } from '../../decorators/user.decorator';
@@ -11,5 +11,10 @@ export class UserController {
   @Delete('/')
   async deleteAccount(@User() { user_oid }: any) {
     return await this.service.deleteAccount(user_oid);
+  }
+
+  @Get('/profile')
+  async profile(@User() { user_oid }: any) {
+    return await this.service.infoUser(user_oid);
   }
 }

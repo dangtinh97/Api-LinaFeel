@@ -10,14 +10,18 @@ import { GOLD_KEYWORDS, NEWS } from '../../common/keyword';
 import { uuidv4 } from '../../common';
 import { MoneyJournalService } from '../money-journal/money-journal.service';
 import { ObjectId } from 'mongodb';
+import { AppConfigService } from '../app-config/app-config.service';
+import { AppSettingKey } from '../app-config/schemas/app-setting.schema';
 
 @Injectable()
 export class GeminiService {
+  private geminiKey = '';
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
     private readonly crawlService: CrawlService,
     private readonly moneyJournalService: MoneyJournalService,
+    private readonly appConfigService: AppConfigService,
   ) {}
 
   async chat(messages: any[]) {
@@ -68,7 +72,10 @@ export class GeminiService {
     ).replaceAll('\n', '');
   }
 
-  async emoQA({ contents, key, name, personality, session_id, user_oid }) {
+  async emoQA({ contents, name, personality, session_id, user_oid }) {
+    this.geminiKey = await this.appConfigService.getByKeyConfig(
+      AppSettingKey.GEMINI_KEY_API,
+    );
     const userAsk = contents.filter((item) => item.role === 'user');
     session_id = session_id ?? uuidv4();
     if (userAsk.length == 0)
@@ -88,7 +95,7 @@ export class GeminiService {
     const callAgent = await this.curlAgent(
       session_id,
       userAsk[userAsk.length - 1].text,
-      key,
+      this.geminiKey,
     );
     if (callAgent.status == 403)
       return {
@@ -130,7 +137,7 @@ export class GeminiService {
 
     const content = await this.createContents({
       contents,
-      key,
+      key: this.geminiKey,
       name,
       personality,
     });
@@ -147,7 +154,7 @@ export class GeminiService {
 
   async createContents({ contents, key, name, personality }) {
     const url =
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent';
     contents = this.mapContent(contents);
     const time = dayjs(new Date())
       .add(7, 'hours')
@@ -263,7 +270,7 @@ Thông tin bổ sung:
       return item.category;
     });
     const url =
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent';
     const body = {
       contents: [
         {
