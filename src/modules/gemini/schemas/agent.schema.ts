@@ -18,7 +18,7 @@ export class AIAgent {
   @Prop({
     type: SchemaTypes.Mixed,
   })
-  function_deeclarations: any;
+  function_declarations: any;
 
   @Prop()
   key: string;

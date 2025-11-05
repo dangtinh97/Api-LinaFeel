@@ -100,6 +100,7 @@ export const _tokenize = (text: string) => {
   }
   return splitAtNearestWord(mergeText(segments, 200), 200);
 };
+
 function splitAtNearestWord(data: string[], maxLength = 200) {
   const result = [];
 
@@ -138,6 +139,7 @@ function splitText(item, maxLength, result = []) {
     return splitText(part2, maxLength, result);
   }
 }
+
 const mergeText = (arr: any, maxLength: number) => {
   const result = [];
   let tempText = arr[0].text + arr[0].punctuation;
@@ -172,4 +174,110 @@ const mergeText = (arr: any, maxLength: number) => {
   }
 
   return result.map((item) => normalizeText(item));
+};
+
+export const convertToSlug = (text: string) => {
+  return text
+    .toLowerCase()
+    .replace(/ /g, '-')
+    .replace(/[^\w-]+/g, '');
+};
+
+export const generateWeatherText = (weatherObj: any) => {
+  const name = weatherObj.name || 'khu vực này';
+  const country = weatherObj.sys?.country ? `, ${weatherObj.sys.country}` : '';
+  const temp = weatherObj.main?.temp ?? 0;
+  const feelsLike = weatherObj.main?.feels_like ?? temp;
+  const humidity = weatherObj.main?.humidity ?? 0;
+  const description = weatherObj.weather?.[0]?.description || 'trời quang đãng';
+
+  const windSpeed = weatherObj.wind?.speed ?? 0;
+  const windDeg = weatherObj.wind?.deg ?? 0;
+  const visibility = weatherObj.visibility ?? 10000;
+
+  // Chuyển tốc độ gió sang mức nhẹ, vừa, mạnh...
+  function windLevel(speed) {
+    if (speed < 3.5) return 'nhẹ';
+    if (speed < 7.5) return 'vừa';
+    if (speed < 12) return 'mạnh';
+    if (speed < 20) return 'rất mạnh';
+    return 'dữ dội';
+  }
+
+  // Chuyển hướng gió
+  function windDirection(deg) {
+    const dirs = [
+      'Bắc',
+      'Bắc Đông',
+      'Đông Bắc',
+      'Đông',
+      'Đông Nam',
+      'Nam Đông',
+      'Nam',
+      'Tây Nam',
+      'Tây',
+      'Tây Bắc',
+    ];
+    const index = Math.round(deg / 45) % 8;
+    return dirs[index];
+  }
+
+  const windText = `Gió ${windLevel(windSpeed)}, thổi từ ${windDirection(windDeg)}`;
+  const visibilityText = `Tầm nhìn khoảng ${visibility / 1000} km`;
+
+  // Tạo mảng ngẫu nhiên các câu
+  const texts = [
+    `Hiện tại ở ${name} trời ${description}, nhiệt độ khoảng ${temp} độ C, độ ẩm ${humidity}%. ${windText}, ${visibilityText}. Hãy tận hưởng ngày hôm nay nhé!`,
+    `Ở ${name} hôm nay trời ${description}, ${windText}, nhiệt độ ${temp} độ C, cảm giác như ${feelsLike} độ, độ ẩm ${humidity}%.`,
+    `${name} hiện có ${description}. Nhiệt độ ${temp} độ C, độ ẩm ${humidity}%, ${windText}, ${visibilityText}.`,
+    `Thời tiết tại ${name}: ${description}, nhiệt độ ${temp} độ C, gió ${windText}, tầm nhìn ${visibilityText}.`,
+    `${name} hôm nay trời ${description}, nhiệt độ ${temp} độ C, độ ẩm ${humidity}%, ${windText}. Hãy tận hưởng ngày hôm nay!`,
+  ];
+
+  return texts[Math.floor(Math.random() * texts.length)];
+};
+
+export const cleanLocation = (location: string) => {
+  if (!location || typeof location !== 'string') return '';
+
+  // Danh sách từ khóa cần loại bỏ
+  const keywords = [
+    'tỉnh',
+    'thành phố',
+    'huyện',
+    'quận',
+    'xã',
+    'phường',
+    'thị trấn',
+  ];
+
+  // Xóa các từ khóa, không phân biệt hoa thường
+  let result = location.toLowerCase();
+  keywords.forEach((word) => {
+    // Xóa cả chữ và khoảng trắng đứng trước/sau
+    const regex = new RegExp(`\\b${word}\\b`, 'gi');
+    result = result.replace(regex, '');
+  });
+
+  // Xóa khoảng trắng thừa
+  result = result.replace(/\s+/g, ' ').trim();
+
+  // Viết hoa chữ cái đầu nếu cần
+  result = result.replace(/\b\w/g, (c) => c.toUpperCase());
+
+  return normalizeName(result);
+};
+
+const normalizeName = (name: string) => {
+  if (!name || typeof name !== 'string') return '';
+
+  // Xóa khoảng trắng thừa
+  name = name.trim().replace(/\s+/g, ' ');
+
+  // Viết hoa chữ cái đầu mỗi từ, phần còn lại viết thường
+  return name
+    .toLowerCase()
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 };

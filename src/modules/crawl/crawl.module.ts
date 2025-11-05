@@ -4,6 +4,9 @@ import { HttpModule } from '@nestjs/axios';
 import { CrawlController } from './crawl.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { News, NewsSchema } from './schemas/news.schema';
+import { Location, LocationSchema } from './schemas/location.schema';
+import { AppConfigModule } from '../app-config/app-config.module';
+import { Weather, WeatherSchema } from './schemas/weather.schema';
 
 @Module({
   imports: [
@@ -12,8 +15,17 @@ import { News, NewsSchema } from './schemas/news.schema';
         name: News.name,
         schema: NewsSchema,
       },
+      {
+        name: Location.name,
+        schema: LocationSchema,
+      },
+      {
+        name: Weather.name,
+        schema: WeatherSchema,
+      },
     ]),
     HttpModule,
+    AppConfigModule,
   ],
   providers: [CrawlService],
   exports: [CrawlService],
