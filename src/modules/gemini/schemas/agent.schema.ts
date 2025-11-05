@@ -1,0 +1,30 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { SchemaTypes } from 'mongoose';
+
+@Schema({
+  collection: 'ai_agents',
+})
+export class AIAgent {
+  @Prop({
+    type: SchemaTypes.Mixed,
+  })
+  action_verb: any;
+
+  @Prop({
+    type: SchemaTypes.Mixed,
+  })
+  object_noun: any;
+
+  @Prop({
+    type: SchemaTypes.Mixed,
+  })
+  function_deeclarations: any;
+
+  @Prop()
+  key: string;
+
+  @Prop()
+  active: boolean;
+}
+
+export const AIAgentSchema = SchemaFactory.createForClass(AIAgent);

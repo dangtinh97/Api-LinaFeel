@@ -76,10 +76,17 @@ export class GeminiService {
   async emoQA({ contents, name, personality, session_id, user_oid }) {
     let keyFindApiKey = AppSettingKey.GEMINI_KEY_API;
     const user = await this.userService.infoUser(user_oid ?? new ObjectId());
-    if (user && user.expired.getTime() > new Date().getTime()) {
+    if (user && user.order_id.indexOf('GPA') !== -1) {
       keyFindApiKey = AppSettingKey.GEMINI_KEY_API_VIP;
     }
-    const key = await this.appConfigService.getByKeyConfig(keyFindApiKey);
+    const keys = await this.appConfigService.getByKeyConfig(keyFindApiKey);
+    let key = '';
+    if (typeof keys === 'string') {
+      key = keys;
+    } else {
+      const random = Math.floor(Math.random() * keys.length);
+      key = keys[random];
+    }
     const userAsk = contents.filter((item) => item.role === 'user');
     session_id = session_id ?? uuidv4();
     if (userAsk.length == 0)

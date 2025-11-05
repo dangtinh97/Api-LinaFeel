@@ -8,6 +8,9 @@ import { MoneyJournalModule } from '../money-journal/money-journal.module';
 import { AppConfigModule } from '../app-config/app-config.module';
 import { UserService } from '../user/user.service';
 import { UserModule } from '../user/user.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { AgentService } from './agent.service';
+import { AIAgent, AIAgentSchema } from './schemas/agent.schema';
 
 @Module({
   imports: [
@@ -17,9 +20,15 @@ import { UserModule } from '../user/user.module';
     MoneyJournalModule,
     AppConfigModule,
     UserModule,
+    MongooseModule.forFeature([
+      {
+        name: AIAgent.name,
+        schema: AIAgentSchema,
+      },
+    ]),
   ],
   exports: [GeminiService],
-  providers: [GeminiService],
+  providers: [GeminiService, AgentService],
   controllers: [GeminiController],
 })
 export class GeminiModule {}
