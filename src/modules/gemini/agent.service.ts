@@ -56,6 +56,9 @@ export class AgentService {
         break;
       }
     }
+    if (Object.keys(functionAgent).length == 0) {
+      return null;
+    }
     if (functionAgent.key === 'gold_price') return this.priceGold();
     if (functionAgent.key === 'take_photo')
       return {
@@ -73,7 +76,10 @@ export class AgentService {
     if (curlAgent == null || curlAgent.status == 403) {
       return curlAgent;
     }
-    if (curlAgent.args && curlAgent.name == 'open_music') {
+    if (
+      curlAgent.args &&
+      ['open_music', 'open_youtube'].includes(curlAgent.name)
+    ) {
       return { status: 200, ...curlAgent };
     }
     if (curlAgent.name === 'read_news') return await this.readNews(curlAgent);
@@ -88,6 +94,10 @@ export class AgentService {
       return await this.crawlService.crawlWeather(
         curlAgent.args.location ?? 'Hà Nội',
       );
+    }
+
+    if(curlAgent.name=='open_youtube'){
+      return curlAgent;
     }
 
     return null;
