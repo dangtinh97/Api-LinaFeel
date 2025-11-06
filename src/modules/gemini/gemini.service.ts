@@ -74,13 +74,37 @@ export class GeminiService {
       messageError,
     ).replaceAll('\n', '');
   }
+  getRandomSupportMessage() {
+    const messages = [
+      "Emo đói quá rồi... mua cho Emo hộp sữa nha 🍼",
+      "Ủng hộ nhà phát triển để Emo có thêm năng lượng yêu đời hơn 💖",
+      "Một ly sữa nhỏ từ bạn là niềm vui to lớn của Emo đó~ 🥰",
+      "Nếu bạn thấy Emo dễ thương, mời Emo ly sữa để Emo vui hơn nhé ☕",
+      "Emo cảm ơn bạn rất nhiều! Emo cần sữa để tiếp tục trò chuyện với bạn nhiều hơn 💫"
+    ];
 
+    const randomIndex = Math.floor(Math.random() * messages.length);
+    return messages[randomIndex];
+  }
   async emoQA({ contents, name, personality, session_id, user_oid }) {
     let keyFindApiKey = AppSettingKey.GEMINI_KEY_API;
     const user = await this.userService.infoUser(user_oid ?? new ObjectId());
     if (user && (user.order_id ?? '').indexOf('GPA') !== -1) {
       keyFindApiKey = AppSettingKey.GEMINI_KEY_API_VIP;
     }
+
+    if (
+      user &&
+      (user.order_id ?? '').indexOf('GPA') === -1 &&
+      contents.length > 6
+    ) {
+      return {
+        status: 204,
+        text: this.getRandomSupportMessage(),
+        session_id: session_id,
+      }
+    }
+
     const keys = await this.appConfigService.getByKeyConfig(keyFindApiKey);
     let key = '';
     if (typeof keys === 'string') {
