@@ -5,6 +5,7 @@ import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import * as _ from 'lodash';
 import * as dayjs from 'dayjs';
+import 'dayjs/locale/vi';
 import { CrawlService } from '../crawl/crawl.service';
 import { getErrorMessage, GOLD_KEYWORDS, NEWS } from '../../common/keyword';
 import { uuidv4 } from '../../common';
@@ -14,7 +15,7 @@ import { AppConfigService } from '../app-config/app-config.service';
 import { AppSettingKey } from '../app-config/schemas/app-setting.schema';
 import { UserService } from '../user/user.service';
 import { AgentService } from './agent.service';
-
+dayjs.locale('vi');
 @Injectable()
 export class GeminiService {
   constructor(
@@ -150,7 +151,7 @@ export class GeminiService {
     contents = this.mapContent(contents);
     const time = dayjs(new Date())
       .add(7, 'hours')
-      .format('HH:mm DD/MM/YYYY')
+      .format('dddd, HH:mm DD/MM/YYYY')
       .toString();
     const prompt = `
 Bạn là trợ lý ảo thông minh tên Emo.${
