@@ -13,6 +13,7 @@ import { lastValueFrom } from 'rxjs';
 import * as _ from 'lodash';
 import { ObjectId } from 'mongodb';
 import { Weather } from '../crawl/schemas/weather.schema';
+import { isArray } from 'lodash';
 
 @Injectable()
 export class AgentService {
@@ -27,19 +28,36 @@ export class AgentService {
     private readonly userService: UserService,
   ) {}
 
-  async analyzeContent({ key, contents, user_oid }) {
-    const promptAgents = await this.agentModel.find({
+  async analyzeContent({ key, contents, user_oid, hass }) {
+    let promptAgents = await this.agentModel.find({
       active: true,
     });
     if (promptAgents.length == 0) {
       return null;
     }
+
+    if (isArray(hass) && hass.length > 0) {
+      hass = hass.map((item) => item.toLocaleLowerCase());
+      console.log(hass);
+      promptAgents = promptAgents.map((item) => {
+        if (item.key != 'hass') {
+          return item;
+        }
+        item.object_noun = hass;
+        _.set(
+          item,
+          'function_declarations.parameters.properties.device.enum',
+          hass,
+        );
+        return item;
+      });
+    }
+    console.log(JSON.stringify(promptAgents,null,2))
     const users = contents.filter((item: any) => item.role == 'user');
     if (users.length == 0) {
       return null;
     }
     const lower = (users[users.length - 1].text ?? '').trim().toLowerCase();
-    console.log(lower);
     if (lower == '') {
       return null;
     }
@@ -78,7 +96,7 @@ export class AgentService {
     }
     if (
       curlAgent.args &&
-      ['open_music', 'open_youtube'].includes(curlAgent.name)
+      ['open_music', 'open_youtube', 'hass'].includes(curlAgent.name)
     ) {
       return { status: 200, ...curlAgent };
     }
@@ -90,13 +108,13 @@ export class AgentService {
       });
     }
 
-    if (curlAgent.name == 'weather'){
+    if (curlAgent.name == 'weather') {
       return await this.crawlService.crawlWeather(
         curlAgent.args.location ?? 'Hà Nội',
       );
     }
 
-    if(curlAgent.name=='open_youtube'){
+    if (curlAgent.name == 'open_youtube') {
       return curlAgent;
     }
 

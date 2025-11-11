@@ -87,7 +87,7 @@ export class GeminiService {
     const randomIndex = Math.floor(Math.random() * messages.length);
     return messages[randomIndex];
   }
-  async emoQA({ contents, name, personality, session_id, user_oid }) {
+  async emoQA({ contents, name, personality, session_id, user_oid, hass }) {
     let keyFindApiKey = AppSettingKey.GEMINI_KEY_API;
     const user = await this.userService.infoUser(user_oid ?? new ObjectId());
     if (user && (user.order_id ?? '').indexOf('GPA') !== -1) {
@@ -126,6 +126,7 @@ export class GeminiService {
       key,
       contents,
       user_oid,
+      hass,
     });
     if (callAgent && (callAgent.status === 403 || callAgent.status === 200)) {
       return {
