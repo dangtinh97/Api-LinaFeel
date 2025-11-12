@@ -52,7 +52,7 @@ export class AgentService {
         return item;
       });
     }
-    console.log(JSON.stringify(promptAgents,null,2))
+    console.log(JSON.stringify(promptAgents, null, 2));
     const users = contents.filter((item: any) => item.role == 'user');
     if (users.length == 0) {
       return null;
@@ -77,6 +77,10 @@ export class AgentService {
     if (Object.keys(functionAgent).length == 0) {
       return null;
     }
+    const keyReturnClient = promptAgents
+      .filter((item) => item.action_client == true)
+      .map((item) => item.key);
+    console.log(keyReturnClient);
     if (functionAgent.key === 'gold_price') return this.priceGold();
     if (functionAgent.key === 'take_photo')
       return {
@@ -96,7 +100,8 @@ export class AgentService {
     }
     if (
       curlAgent.args &&
-      ['open_music', 'open_youtube', 'hass'].includes(curlAgent.name)
+      keyReturnClient.length > 0 &&
+      keyReturnClient.includes(curlAgent.name)
     ) {
       return { status: 200, ...curlAgent };
     }

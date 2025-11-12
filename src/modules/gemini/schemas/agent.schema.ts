@@ -25,6 +25,9 @@ export class AIAgent {
 
   @Prop()
   active: boolean;
+
+  @Prop({ default: false })
+  action_client: boolean;
 }
 
 export const AIAgentSchema = SchemaFactory.createForClass(AIAgent);
