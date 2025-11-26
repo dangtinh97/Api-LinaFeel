@@ -17,6 +17,7 @@ import { MoneyJournalModule } from './modules/money-journal/money-journal.module
 import { AdminModule } from './modules/admin/admin.module';
 import { KeyAppModule } from './modules/key-app/key-app.module';
 import { EdgeTtsModule } from './modules/edge-tts/edge-tts.module';
+import { MarketingModule } from './modules/marketing/marketing.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { EdgeTtsModule } from './modules/edge-tts/edge-tts.module';
     AdminModule,
     KeyAppModule,
     EdgeTtsModule,
+    MarketingModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService, JwtStrategy, ConfigService],
