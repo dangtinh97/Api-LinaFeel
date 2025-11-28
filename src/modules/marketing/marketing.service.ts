@@ -58,7 +58,11 @@ export class MarketingService {
         };
       }
       if (item.type == 'function_call') {
-        maping['parts'] = [item.content];
+        maping['parts'] = [
+          {
+            functionCall: item.content,
+          },
+        ];
       }
       return maping;
     });
@@ -84,9 +88,7 @@ export class MarketingService {
     if (curl.text) {
       await this.marketingContentModel.create({
         session_id: session_id,
-        content: (curl.text ?? '')
-          .replaceAll('*','')
-          .replaceAll('\n', ''),
+        content: (curl.text ?? '').replaceAll('*', '').replaceAll('\n', ''),
         role: 'model',
         type: 'text',
       });
@@ -98,6 +100,16 @@ export class MarketingService {
     }
     if (curl.functionCall) {
       if (curl.functionCall.name === 'order_product') {
+        await this.marketingContentModel
+          .updateMany(
+            {
+              session_id: session_id,
+            },
+            {
+              session_id: 'END_' + session_id,
+            },
+          )
+          .exec();
         this.sendNotification(curl.functionCall.args, 0).then();
         return {
           session_id,
