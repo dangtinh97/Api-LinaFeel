@@ -52,7 +52,6 @@ export class AgentService {
         return item;
       });
     }
-    console.log(JSON.stringify(promptAgents, null, 2));
     const users = contents.filter((item: any) => item.role == 'user');
     if (users.length == 0) {
       return null;

@@ -178,6 +178,7 @@ export class MarketingService {
       );
       return curl.data;
     } catch (e) {
+      console.error(e);
       await sleep(1000);
       this.sendNotification(infoBill, retry + 1).then();
     }

@@ -63,7 +63,6 @@ export class AdminService {
 
       result.push(item);
     });
-    console.log(result);
     return result;
   }
 }

@@ -209,7 +209,6 @@ export class CrawlService {
       const url = `https://geocode.maps.co/search?q=${encodeURIComponent(location)}&api_key=${key}`;
       const curl = await lastValueFrom(this.httpService.get(url));
       const jsonData = curl.data[0];
-      console.log(JSON.stringify(jsonData, null, 2));
       const name = cleanLocation(_.get(jsonData, 'namedetails.name:vi', ''));
       const create = await this.locationModel.create({
         name: name,
