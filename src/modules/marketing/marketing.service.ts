@@ -6,7 +6,7 @@ import { lastValueFrom } from 'rxjs';
 import { InjectModel } from '@nestjs/mongoose';
 import { MarketingContent } from './schemas/marketing-content.schema';
 import { Model } from 'mongoose';
-import { uuidv4 } from '../../common';
+import { sleep, uuidv4 } from '../../common';
 import { AppConfigService } from '../app-config/app-config.service';
 import * as _ from 'lodash';
 import * as dayjs from 'dayjs';
@@ -84,7 +84,9 @@ export class MarketingService {
     if (curl.text) {
       await this.marketingContentModel.create({
         session_id: session_id,
-        content: curl.text,
+        content: (curl.text ?? '')
+          .replaceAll('*','')
+          .replaceAll('\n', ''),
         role: 'model',
         type: 'text',
       });
@@ -95,20 +97,20 @@ export class MarketingService {
       };
     }
     if (curl.functionCall) {
-      await this.marketingContentModel.create({
-        session_id: session_id,
-        content: curl.functionCall,
-        role: 'model',
-        type: 'function_call',
-      });
       if (curl.functionCall.name === 'order_product') {
-        this.sendNotification(curl.functionCall.args).then();
+        this.sendNotification(curl.functionCall.args, 0).then();
         return {
           session_id,
           status: 201,
           text: 'Cảm ơn anh/ chị đã mua hàng bên em',
         };
       }
+      await this.marketingContentModel.create({
+        session_id: session_id,
+        content: curl.functionCall,
+        role: 'model',
+        type: 'function_call',
+      });
     }
     return {
       status: 400,
@@ -154,22 +156,30 @@ export class MarketingService {
     }
   }
 
-  async sendNotification(infoBill: any) {
-    const token = '8211532200:AAGMApFf36joW71hRLuSfOFHdooIK6xC5rY';
-    const time = dayjs(new Date())
-      .add(7, 'hours')
-      .format('HH:mm DD/MM/YYYY')
-      .toString();
-    const body = `Thông tin đơn hàng:\nĐơn hàng được tạo lúc: ${time}\nSản phẩm:\n${infoBill.product_name}, size: ${infoBill.product_size}, màu: ${infoBill.product_color}, số lượng:${infoBill.quantity}\nKhách hàng:\n${infoBill.customer_name} - ${infoBill.phone_number} - ${infoBill.shipping_address}`;
-    const url = `https://api.telegram.org/bot${token}/sendMessage?text=${encodeURI(body)}&chat_id=-1003491650167&parse_mode=Markdown`;
-    console.log(url);
-    const curl = await lastValueFrom(
-      this.httpService.post(url, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }),
-    );
-    return curl.data;
+  async sendNotification(infoBill: any, retry = 0) {
+    try {
+      if (retry >= 5) {
+        return;
+      }
+      const token = '8211532200:AAGMApFf36joW71hRLuSfOFHdooIK6xC5rY';
+      const time = dayjs(new Date())
+        .add(7, 'hours')
+        .format('HH:mm DD/MM/YYYY')
+        .toString();
+      const body = `Thông tin đơn hàng:\nĐơn hàng được tạo lúc: ${time}\nSản phẩm:\n${infoBill.product_name}, size: ${infoBill.product_size}, màu: ${infoBill.product_color}, số lượng:${infoBill.quantity}\nKhách hàng:\n${infoBill.customer_name} - ${infoBill.phone_number} - ${infoBill.shipping_address}`;
+      const url = `https://api.telegram.org/bot${token}/sendMessage?text=${encodeURI(body)}&chat_id=-1003491650167&parse_mode=Markdown`;
+      console.log(url);
+      const curl = await lastValueFrom(
+        this.httpService.post(url, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }),
+      );
+      return curl.data;
+    } catch (e) {
+      await sleep(1000);
+      this.sendNotification(infoBill, retry + 1).then();
+    }
   }
 }
