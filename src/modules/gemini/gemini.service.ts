@@ -103,7 +103,7 @@ export class GeminiService {
         status: 204,
         text: this.getRandomSupportMessage(),
         session_id: session_id,
-      }
+      };
     }
 
     const keys = await this.appConfigService.getByKeyConfig(keyFindApiKey);
@@ -220,5 +220,52 @@ Thông tin bổ sung:
         ],
       };
     });
+  }
+
+  public async getKey(keyFindApiKey: string): Promise<string> {
+    const keys = await this.appConfigService.getByKeyConfig(keyFindApiKey);
+    let key = '';
+    if (typeof keys === 'string') {
+      key = keys;
+    } else {
+      const random = Math.floor(Math.random() * keys.length);
+      key = keys[random];
+    }
+    return key;
+  }
+
+  async curl(data: any, apiKey: string) {
+    const url =
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent';
+    try {
+      const curl = await lastValueFrom(
+        this.httpService.post(
+          url,
+          { ...data },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'X-goog-api-key': apiKey,
+            },
+          },
+        ),
+      );
+      const text = _.get(curl.data, 'candidates.0.content.parts.0.text', null);
+      const functionCall = _.get(
+        curl.data,
+        'candidates.0.content.parts.0.functionCall',
+        null,
+      );
+      if (text) {
+        return { text };
+      }
+      if (functionCall) {
+        return { functionCall };
+      }
+      return curl.data;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
   }
 }

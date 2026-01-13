@@ -6,12 +6,10 @@ import { CrawlModule } from '../crawl/crawl.module';
 import { LogModule } from '../log/log.module';
 import { MoneyJournalModule } from '../money-journal/money-journal.module';
 import { AppConfigModule } from '../app-config/app-config.module';
-import { UserService } from '../user/user.service';
 import { UserModule } from '../user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AgentService } from './agent.service';
 import { AIAgent, AIAgentSchema } from './schemas/agent.schema';
-
 @Module({
   imports: [
     HttpModule,
@@ -27,7 +25,7 @@ import { AIAgent, AIAgentSchema } from './schemas/agent.schema';
       },
     ]),
   ],
-  exports: [GeminiService],
+  exports: [GeminiService, AgentService],
   providers: [GeminiService, AgentService],
   controllers: [GeminiController],
 })

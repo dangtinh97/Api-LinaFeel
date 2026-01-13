@@ -18,6 +18,7 @@ import { AdminModule } from './modules/admin/admin.module';
 import { KeyAppModule } from './modules/key-app/key-app.module';
 import { EdgeTtsModule } from './modules/edge-tts/edge-tts.module';
 import { MarketingModule } from './modules/marketing/marketing.module';
+import { VoiceConversationModule } from './modules/voice-conversation/voice-conversation.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { MarketingModule } from './modules/marketing/marketing.module';
     KeyAppModule,
     EdgeTtsModule,
     MarketingModule,
+    VoiceConversationModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService, JwtStrategy, ConfigService],

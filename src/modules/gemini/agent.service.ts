@@ -138,7 +138,7 @@ export class AgentService {
     };
   }
 
-  private async readNews(callAgent: any) {
+  async readNews(callAgent: any) {
     const { category, title, description } =
       await this.crawlService.getRandomNews(callAgent.args.category ?? 'ALL');
     return {
@@ -147,7 +147,7 @@ export class AgentService {
     };
   }
 
-  private async priceGold() {
+  async priceGold() {
     const ansGold = await this.crawlService.goldPrice();
     if (!ansGold) {
       return null;
@@ -203,5 +203,27 @@ export class AgentService {
         text: getErrorMessage(),
       };
     }
+  }
+
+  async readNewsV2(callAgent: any): Promise<any> {
+    const { category, title, description } =
+      await this.crawlService.getRandomNews(callAgent.args.category ?? 'ALL');
+    return {
+      category,
+      title,
+      description,
+    };
+  }
+
+  async allAgent(): Promise<any> {
+    const promptAgents = await this.agentModel.find({
+      active: true,
+    });
+    return {
+      tools: promptAgents.map((item) => item.function_declarations),
+      actionClients: promptAgents
+        .filter((item) => item.action_client)
+        .map((item) => item.key),
+    };
   }
 }
