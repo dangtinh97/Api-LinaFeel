@@ -13,7 +13,6 @@ export class VoiceConversationController {
     @User() { user_oid }: any,
     @Req() req: Request,
   ): Promise<any> {
-    console.log(user_oid);
     const { message, session_id, name, personality } = req.body as any;
     return await this.service.smartConversation({
       user_oid,

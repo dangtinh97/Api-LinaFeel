@@ -142,6 +142,17 @@ Thông tin bổ sung:
       contents,
     };
     const response = await this.geminiService.curl(body, apiKey);
+    if (response == null) {
+      await this.voiceConversationModel.deleteOne({
+        _id: new ObjectId(createConversation._id.toString()),
+      });
+      await this.voiceConversationModel.deleteMany({
+        session_id: session_id,
+      });
+      return {
+        text: getErrorMessage(),
+      };
+    }
     if (response.text) {
       const contentNew = (response.text ?? '')
         .replaceAll('*', '')
