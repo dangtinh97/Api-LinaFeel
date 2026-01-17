@@ -72,17 +72,19 @@ export class VoiceConversationService {
     if (user && (user.order_id ?? '').indexOf('GPA') !== -1) {
       keyType = AppSettingKey.GEMINI_KEY_API_VIP;
     }
-    const [agents, createConversation, apiKey] = await Promise.all([
-      this.aiAgentService.allAgent(),
-      this.voiceConversationModel.create({
-        user_oid: new ObjectId(user_oid),
-        content: message,
-        role: 'user',
-        session_id: session_id,
-        type: 'text',
-      }),
-      this.geminiService.getKey(keyType),
-    ]);
+    const [agents, createConversation, apiKey, systemInstruction] =
+      await Promise.all([
+        this.aiAgentService.allAgent(),
+        this.voiceConversationModel.create({
+          user_oid: new ObjectId(user_oid),
+          content: message,
+          role: 'user',
+          session_id: session_id,
+          type: 'text',
+        }),
+        this.geminiService.getKey(keyType),
+        this.appConfigService.getByKeyConfig('EMO_SYSTEM_INSTRUCTION'),
+      ]);
     findConversation.push({
       type: 'text',
       role: 'user',
@@ -120,14 +122,19 @@ export class VoiceConversationService {
       .add(7, 'hours')
       .format('dddd, HH:mm DD/MM/YYYY')
       .toString();
-    const prompt = `
-Bạn là trợ lý ảo thông minh tên Emo.${
-      personality.trim() ? ` Bạn có tính cách ${personality.trim()}.` : ''
-    }${name.trim() ? ` Tên của tôi là ${name.trim()}.` : ''}
-Luôn trả lời ngắn gọn, tự nhiên như đang nói chuyện, không chứa ký tự đặc biệt hay emoji.
-Thông tin bổ sung:
-- Thời gian ở Việt Nam hiện tại là: ${time}
-`.trim();
+
+    personality =
+      personality.trim() == ''
+        ? ''
+        : `Bạn có tính cách ${personality.trim()}.`;
+    name = name.trim() == '' ? '' : `Tên của tôi là ${name.trim()}.`;
+
+    const prompt = systemInstruction['vi']
+      .replaceAll('{{user_name}}', name)
+      .replaceAll('{{time}}', time)
+      .replaceAll('{{personality}}', personality)
+      .replace(/\s+/g, ' ')
+      .trim();
     const body = {
       system_instruction: {
         parts: [
