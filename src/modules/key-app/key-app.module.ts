@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { KeyApp, KeyAppSchema } from './schemas/key-app.schemas';
 import { KeyAppService } from './key-app.service';
 import { KeyAppController } from './key-app.controller';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { KeyAppController } from './key-app.controller';
         schema: KeyAppSchema,
       },
     ]),
+    UserModule,
   ],
   exports: [KeyAppService],
   providers: [KeyAppService],

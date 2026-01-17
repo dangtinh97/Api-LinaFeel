@@ -162,4 +162,13 @@ export class KeyAppService {
       _id: getCheck._id.toString(),
     };
   }
+
+  async getPicoVoice(orderId: string): Promise<any> {
+    return await this.keyAppModel
+      .findOne({
+        order_id: orderId,
+        active: true,
+      })
+      .then();
+  }
 }
