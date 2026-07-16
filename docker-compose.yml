@@ -1,9 +1,8 @@
 version: '3'
 services:
   node_app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: dangtinh1221/be-emodesk:latest
+    container_name: be-emodesk
     working_dir: /app
     ports:
       - "4000:3000"

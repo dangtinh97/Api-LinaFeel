@@ -1,0 +1,44 @@
+name: Docker Deploy to Lightsail
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    environment: Action LightSail
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Debug image name
+        run: echo "dangtinh1221/be-emodesk:latest"
+
+      - name: Login Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: dangtinh1221
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & Push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            dangtinh1221/timpo-be:latest
+            dangtinh1221/timpo-be:${{ github.sha }}
+
+      - name: Deploy on Lightsail
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 54.151.162.201
+          username: ubuntu
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          command_timeout: 30m
+          script: |
+            cd /home/ubuntu/timpo
+            docker compose pull
+            docker compose up -d
+            docker image prune -f
