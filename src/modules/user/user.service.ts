@@ -87,4 +87,25 @@ export class UserService {
       .exec();
     return;
   }
+
+  async update(userOid: string, data: any) {
+    console.log(userOid,data)
+    const find = await this.userModel.findOne({
+      _id: new ObjectId(userOid),
+    });
+    if (!find) {
+      return;
+    }
+    await this.userModel
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(userOid),
+        },
+        {
+          $set: data,
+        },
+      )
+      .exec();
+    return;
+  }
 }
