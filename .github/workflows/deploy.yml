@@ -27,8 +27,8 @@ jobs:
           context: .
           push: true
           tags: |
-            dangtinh1221/timpo-be:latest
-            dangtinh1221/timpo-be:${{ github.sha }}
+            dangtinh1221/be-emodesk:latest
+            dangtinh1221/be-emodesk:${{ github.sha }}
 
       - name: Deploy on Lightsail
         uses: appleboy/ssh-action@v1.0.3
@@ -38,7 +38,7 @@ jobs:
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
           command_timeout: 30m
           script: |
-            cd /home/ubuntu/timpo
+            cd /home/ubuntu/Api-LinaFeel
             docker compose pull
             docker compose up -d
             docker image prune -f
