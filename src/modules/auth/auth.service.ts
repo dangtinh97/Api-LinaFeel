@@ -31,12 +31,12 @@ export class AuthService {
       AppSettingKey.APP_VERSION.toString(),
     );
     if (versionCurrent > appVersion) {
-      throw new HttpException(
-        {
-          message: 'Update app new verstion',
-        },
-        4003,
-      );
+      // throw new HttpException(
+      //   {
+      //     message: 'Update app new verstion',
+      //   },
+      //   4003,
+      // );
     }
 
     const token = this.jwtService.sign({
