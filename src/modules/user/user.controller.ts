@@ -21,7 +21,8 @@ export class UserController {
   async profile(@User() { user_oid }: any, @Query() language: any) {
     const user: any = await this.service.infoUser(user_oid);
     const xiaozhiConfig = await this.appConfigService.getByKeyConfig('XIAOZHI_DEFAULT');
-    const xiapzhiResponse = xiaozhiConfig[language] ?? xiaozhiConfig['vi'];
+    const xiapzhiResponse =
+      xiaozhiConfig[language.language ?? 'vi'] ?? xiaozhiConfig['vi'];
     user.ai = xiapzhiResponse;
     return user;
   }
