@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { BaseModel } from '../../../shared/schemas/base.model';
+import { SchemaTypes } from 'mongoose';
 
 @Schema({
   collection: 'users',
@@ -34,6 +35,11 @@ export class User extends BaseModel {
 
   @Prop()
   order_id: string;
+
+  @Prop({
+    type: SchemaTypes.Mixed,
+  })
+  ai: any;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
