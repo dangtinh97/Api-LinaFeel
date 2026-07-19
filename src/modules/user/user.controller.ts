@@ -32,7 +32,7 @@ export class UserController {
       if (ai != null) {
         user.ai = ai;
         await this.service.update(
-          user_oid,ai
+          user_oid,{ai:ai}
         )
       }
     }
