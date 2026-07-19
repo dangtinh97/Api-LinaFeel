@@ -4,6 +4,7 @@ import { User, UserSchema } from './schemas/user.schema';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { AppConfigModule } from '../app-config/app-config.module';
+import { XiaozhiModule } from '../xiaozhi/xiaozhi.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AppConfigModule } from '../app-config/app-config.module';
       },
     ]),
     AppConfigModule,
+    XiaozhiModule,
   ],
   controllers: [UserController],
   providers: [UserService],

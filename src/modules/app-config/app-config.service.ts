@@ -23,4 +23,11 @@ export class AppConfigService {
       ).data ?? null
     );
   }
+
+  async getXiaozhi(language: string):Promise<any>{
+    const xiaozhiConfig = await this.getByKeyConfig('XIAOZHI_DEFAULT');
+    const xiapzhiResponse =
+      xiaozhiConfig[language ?? 'vi'] ?? xiaozhiConfig['vi'];
+    return xiapzhiResponse;
+  }
 }
