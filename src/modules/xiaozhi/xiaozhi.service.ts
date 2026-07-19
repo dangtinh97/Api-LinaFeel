@@ -10,7 +10,7 @@ export class XiaozhiService {
   constructor(private readonly httpService: HttpService) {}
 
   async registerXiaozhi():Promise<any> {
-    const mac = this.randomMac();
+    const mac = this.randomMac().toLowerCase();
     const curl = await lastValueFrom(
       this.httpService.post(
         'https://api.tenclass.net/xiaozhi/ota/',
